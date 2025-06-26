@@ -297,7 +297,7 @@ However, we also need a way to connect to the network and also edit files at a m
 *I recall having issues with just having iwd, I may revist his later.
 
 ```shell
-root@archiso ~ # pacstrap -K /mnt base linux linux-firmware iwd vim
+root@archiso ~ # pacstrap -K /mnt base linux linux-firmware iwd vim mdadm 
 ==> Creating install root at /mnt
 gpg: /mnt/etc/pacman.d/gnupg/trustdb.gpg: trustdb created
 gpg: no ultimately trusted keys found
@@ -982,6 +982,417 @@ UTC
 ```
 
 ### Locale
+we can use `vim` to edit the local file under `/etc/locale.conf`.
+
+Before:
+
+```shell
+[root@archiso /]# cat /etc/locale.gen | grep "en_GB"
+#en_GB.UTF-8 UTF-8
+#en_GB ISO-8859-1
+[root@archiso /]# vim /etc/locale.gen
+```
+
+Find the locale for your country / region. For example mine is `en_GB.UTF-8 UTF-8`. Then uncomment by remiving the `#`
+
+If using vim, you can use `:x` to save the file and exit.
+
+After:
+
+```shell
+[root@archiso /]# cat /etc/locale.gen | grep "en_GB"
+en_GB.UTF-8 UTF-8
+#en_GB ISO-8859-1
+```
+
+Then you can perform the locale gen
+
+```shell
+[root@archiso /]# locale-gen
+Generating locales...
+  en_GB.UTF-8... done
+Generation complete.
+```
+
+Next we need to create the LANG variable
+
+```shell
+[root@archiso /]# echo "LANG=en_GB.UTF-8" > /etc/locale.conf; cat /etc/locale.conf
+LANG=en_GB.UTF-8
+```
+
+We also want to set the kemap perminantly
+
+```shell
+[root@archiso /]# echo "KEYMAP=uk" > /etc/vconsole.conf; cat /etc/vconsole.conf
+KEYMAP=uk
+```
+
+### Set hostname
+And we want to create the hostname. I'm going to use `archibold` this time.
+
+```shell
+[root@archiso /]# echo "archibold" > /etc/hostname; cat /etc/hostname
+archibold
+```
+
+
+### initramfs
+We don't need to run it, but I like to for completeness
+
+```shell
+[root@archiso /]# mkinitcpio -P
+==> Building image from preset: /etc/mkinitcpio.d/linux.preset: 'default'
+==> Using default configuration file: '/etc/mkinitcpio.conf'
+  -> -k /boot/vmlinuz-linux -g /boot/initramfs-linux.img
+==> Starting build: '6.15.3-arch1-1'
+  -> Running build hook: [base]
+  -> Running build hook: [udev]
+  -> Running build hook: [autodetect]
+  -> Running build hook: [microcode]
+  -> Running build hook: [modconf]
+  -> Running build hook: [kms]
+  -> Running build hook: [keyboard]
+  -> Running build hook: [keymap]
+  -> Running build hook: [consolefont]
+==> WARNING: consolefont: no font found in configuration
+  -> Running build hook: [block]
+  -> Running build hook: [filesystems]
+  -> Running build hook: [fsck]
+==> Generating module dependencies
+==> Creating zstd-compressed initcpio image: '/boot/initramfs-linux.img'
+  -> Early uncompressed CPIO image generation successful
+==> Initcpio image generation successful
+==> Building image from preset: /etc/mkinitcpio.d/linux.preset: 'fallback'
+==> Using default configuration file: '/etc/mkinitcpio.conf'
+  -> -k /boot/vmlinuz-linux -g /boot/initramfs-linux-fallback.img -S autodetect
+==> Starting build: '6.15.3-arch1-1'
+  -> Running build hook: [base]
+  -> Running build hook: [udev]
+  -> Running build hook: [microcode]
+  -> Running build hook: [modconf]
+  -> Running build hook: [kms]
+==> WARNING: Possibly missing firmware for module: 'ast'
+  -> Running build hook: [keyboard]
+==> WARNING: Possibly missing firmware for module: 'xhci_pci_renesas'
+  -> Running build hook: [keymap]
+  -> Running build hook: [consolefont]
+==> WARNING: consolefont: no font found in configuration
+  -> Running build hook: [block]
+==> WARNING: Possibly missing firmware for module: 'aic94xx'
+==> WARNING: Possibly missing firmware for module: 'qed'
+==> WARNING: Possibly missing firmware for module: 'bfa'
+==> WARNING: Possibly missing firmware for module: 'qla2xxx'
+==> WARNING: Possibly missing firmware for module: 'qla1280'
+==> WARNING: Possibly missing firmware for module: 'wd719x'
+  -> Running build hook: [filesystems]
+  -> Running build hook: [fsck]
+==> Generating module dependencies
+==> Creating zstd-compressed initcpio image: '/boot/initramfs-linux-fallback.img'
+  -> Early uncompressed CPIO image generation successful
+==> Initcpio image generation successful
+```
+
+We have some warnings, we can hunt these down at a later date, my expereicne is that generally they are warnings and not actually an issue with the installation. 
+
+### Password time
+Okay, we are now at the stage where we can put a password on the system. We can do that with `passwd`
+
+```shell
+[root@archiso /]# passwd
+New password: notmypassword
+Retype new password: notmypassword
+passwd: password updated successfully
+```
+
+### bootloader
+This is generally where things go to shit for me. 
+
+I am raw dumping at the moment, will format correctly with explanations later
+
+
+```shell
+[root@archiso /]# mount | grep boot
+/dev/md126p1 on /boot type vfat (rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro)
+```
+
+
+```shell
+[root@archiso /]# df -h boot
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/md126p1    5.0G  188M  4.9G   4% /boot
+```
+
+```shell
+[root@archiso /]# bootctl install
+Created "/boot/EFI".
+Created "/boot/EFI/systemd".
+Created "/boot/EFI/BOOT".
+Created "/boot/loader".
+Created "/boot/loader/keys".
+Created "/boot/loader/entries".
+Created "/boot/EFI/Linux".
+Copied "/usr/lib/systemd/boot/efi/systemd-bootx64.efi" to "/boot/EFI/systemd/systemd-bootx64.efi".
+Copied "/usr/lib/systemd/boot/efi/systemd-bootx64.efi" to "/boot/EFI/BOOT/BOOTX64.EFI".
+⚠️ Mount point '/boot' which backs the random seed file is world accessible, which is a security hole! ⚠️
+⚠️ Random seed file '/boot/loader/.#bootctlrandom-seed2e9d1f0a5927f3bf' is world accessible, which is a security hole! ⚠️
+Random seed file /boot/loader/random-seed successfully written (32 bytes).
+````
+
+Obviously we don't want security holes., we'll come back to this but it is to do with the configuraiton of the chrooted environment. We can fix by closing down the permissions later
+
+```shell
+chmod 0700 /boot
+chmod 0700 /boot/loader
+chmod 0600 /boot/loader/random-seed
+```
+
+
+Updating `loader.conf`
+
+```shell
+[root@archiso /]# vim /boot/loader/loader.conf; cat /boot/loader/loader.conf
+default archibold
+timeout 3
+console-mode max
+editor no
+```
+
+Lets set the compression to `gzip` and enable the hooks
+
+```shell
+[root@archiso /]# vim /etc/mkinitcpio.conf; grep -E 'gzip|HOOKS' /etc/mkinitcpio.conf
+# HOOKS
+# This is the most important setting in this file.  The HOOKS control the
+# order in which HOOKS are added.  Run 'mkinitcpio -H <hook name>' for
+#    HOOKS=(base)
+#    HOOKS=(base udev autodetect modconf block filesystems fsck)
+#    HOOKS=(base udev modconf block filesystems fsck)
+#    HOOKS=(base udev modconf keyboard keymap consolefont block mdadm_udev encrypt filesystems fsck)
+#    HOOKS=(base udev modconf block lvm2 filesystems fsck)
+#    HOOKS=(base systemd autodetect modconf kms keyboard sd-vconsole sd-encrypt block filesystems fsck)
+#HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck)
+HOOKS=(base systemd autodetect modconf block mdadm_udev filesystems keyboard fsck)
+# is used for Linux ≥ 5.9 and gzip compression is used for Linux < 5.9.
+COMPRESSION="gzip"
+```
+
+configure `linux.preset`
+
+```shell
+[root@archiso /]# vim /etc/mkinitcpio.d/linux.preset; cat /etc/mkinitcpio.d/linux.preset
+# mkinitcpio preset file for the 'linux' package
+
+#ALL_config="/etc/mkinitcpio.conf"
+#ALL_kver="/boot/vmlinuz-linux"
+
+#PRESETS=('default' 'fallback')
+
+#default_config="/etc/mkinitcpio.conf"
+#default_image="/boot/initramfs-linux.img"
+#default_uki="/efi/EFI/Linux/arch-linux.efi"
+#default_options="--splash /usr/share/systemd/bootctl/splash-arch.bmp"
+
+#fallback_config="/etc/mkinitcpio.conf"
+#fallback_image="/boot/initramfs-linux-fallback.img"
+#fallback_uki="/efi/EFI/Linux/arch-linux-fallback.efi"
+#fallback_options="-S autodetect"
+
+PRESETS=('default')
+
+ALL_config="/etc/mkinitcpio.conf"
+ALL_kver="/boot/vmlinuz-linux"
+
+default_uki="/boot/EFI/Linux/archibold.efi"
+```
+
+Grab the uuid for the root partition
+
+```shell
+[root@archiso /]# blkid -s PARTUUID -o value /dev/md126p3
+75bd02ea-c59a-45be-8b64-e38e088c68ba
+```
+
+
+fix the kernel cmdline
+
+```shell
+[root@archiso /]# echo "root=PARTUUID=75bd02ea-c59a-45be-8b64-e38e088c68ba rw quiet loglevel=3" > /etc/kernel/cmdline
+[root@archiso /]# cat /etc/kernel/cmdline
+root=PARTUUID=75bd02ea-c59a-45be-8b64-e38e088c68ba rw quiet loglevel=3
+```
+
+Rebuild UKI
+
+```shell
+[root@archiso /]# mkinitcpio -p linux
+==> Building image from preset: /etc/mkinitcpio.d/linux.preset: 'default'
+==> Using configuration file: '/etc/mkinitcpio.conf'
+  -> -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -U /boot/EFI/Linux/archibold.efi
+==> Starting build: '6.15.3-arch1-1'
+  -> Running build hook: [base]
+  -> Running build hook: [systemd]
+  -> Running build hook: [autodetect]
+  -> Running build hook: [modconf]
+  -> Running build hook: [block]
+  -> Running build hook: [mdadm_udev]
+  -> Running build hook: [filesystems]
+  -> Running build hook: [keyboard]
+  -> Running build hook: [fsck]
+==> Generating module dependencies
+==> Creating gzip-compressed initcpio image
+  -> Early uncompressed CPIO image generation successful
+==> Initcpio image generation successful
+==> Creating unified kernel image: '/boot/EFI/Linux/archibold.efi'
+  -> Using cmdline file: '/etc/kernel/cmdline'
+==> Unified kernel image generation successful
+```
+
+Create the boot entry
+
+```shell
+[root@archiso /]# vim /boot/loader/entries/archibold.conf; cat /boot/loader/entries/archibold.conf
+title   Arch Linux (RAID-0 UKI)
+efi     /EFI/Linux/archibold.efi
+``
+
+
+verify boot entries
+
+```shell
+[root@archiso /]# bootctl list
+         type: Boot Loader Specification Type #2 (.efi)
+        title: Arch Linux (default) (not reported/new)
+           id: archibold.efi
+       source: /boot//EFI/Linux/archibold.efi (on the EFI System Partition)
+     sort-key: arch
+      version: 6.15.3-arch1-1
+        linux: /boot//EFI/Linux/archibold.efi
+      options: root=PARTUUID=6bbc60fc-9fb1-436b-bca1-c46db43a54e4 rw quiet loglevel=3
+
+         type: Boot Loader Specification Type #1 (.conf)
+        title: Arch Linux (RAID-0 UKI) (not reported/new)
+           id: archibold.conf
+       source: /boot//loader/entries/archibold.conf (on the EFI System Partition)
+          efi: /boot//EFI/Linux/archibold.efi
+```
+
+Verify arch is available
+
+```shell
+[root@archiso /]# ls -lh /boot/EFI/Linux/archibold.efi
+-rwxr-xr-x 1 root root 26M Jun 25 13:42 /boot/EFI/Linux/archibold.efi
+```
+
+Verify arch is in the loader entries
+
+```shell
+[root@archiso /]# ls /boot/loader/entries/
+archibold.conf
+```
+
+Verify the selected entry
+
+```shell
+[root@archiso /]# bootctl status
+System:
+Not booted with EFI
+
+Available Boot Loaders on ESP:
+          ESP: /boot
+         File: ├─/EFI/systemd/systemd-bootx64.efi (systemd-boot 257.7-1-arch)
+               └─/EFI/BOOT/BOOTX64.EFI (systemd-boot 257.7-1-arch)
+
+Boot Loader Entries:
+        $BOOT: /boot
+        token: arch
+
+Default Boot Loader Entry:
+         type: Boot Loader Specification Type #2 (.efi)
+        title: Arch Linux
+           id: archibold.efi
+       source: /boot//EFI/Linux/archibold.efi (on the EFI System Partition)
+     sort-key: arch
+      version: 6.15.3-arch1-1
+        linux: /boot//EFI/Linux/archibold.efi
+      options: root=PARTUUID=75bd02ea-c59a-45be-8b64-e38e088c68ba rw quiet loglevel=3
+```
+
+### Reboot time.
+
+
+```shell
+[root@archiso /]# exit
+exit
+arch-chroot /mnt  41.51s user 34.29s system 0% cpu 2:34:03.92 total
+```
+
+```shell
+root@archiso ~ # shutdown -h now
+```
+
+
+
+
+
+## How to re-choot
+Set keyboard layout
+
+```shell
+root@archiso ~ # loadkeys uk
+```
+
+Conenct the wireless
+```
+root@archiso ~ # iwctl
+NetworkConfigurationEnabled: disabled
+StateDirectory: /var/lib/iwd
+Version: 3.8
+[iwd]# station wlan0 connect SSID-abc
+Type the network passprhase for SSID-abc psk
+Passphrase: ***
+[iwd]# quit
+```
+
+Test the network connection
+
+```shell
+root@archiso ~ # ping -3 -c 1 archlinux.org
+PING archlinux.org (95.217.163.246) 56(84) bytes of data.
+64 bytes from archlinux.org (95.217.163.246): icmp_seq=1 ttl=52 time=47.401 ms
+
+--- archlinux.org ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 47.401/47.401/47.401/0.000 ms
+```
+
+Mount the root filesystem
+
+```shell
+root@archiso ~ # mount /dev/md126p3 /mnt
+```
+
+mount the boot partition
+
+```shell
+root@archiso ~ # mount /dev/md126p1 /mnt/boot
+```
+
+finally chroot into the system
+
+```shell
+root@archiso ~ # arch-chroot /mnt
+[root@archiso /]#
+```
+
+
+
+
+
+
+
+
+
 
 
 
