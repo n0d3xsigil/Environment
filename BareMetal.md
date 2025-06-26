@@ -933,6 +933,58 @@ pacstrap -K /mnt base linux linux-firmware iwd vim  23.98s user 17.64s system 58
 
 I'm going to keep this in for the time being for later review, however, this is not required by any measure ;)
 
+## Configure the sytem
+Lets create the fstab using `genfstab` tool
+
+```shell
+root@archiso ~ # genfstab -U /mnt >> /mnt/etc/fstab
+```
+
+### chroot time
+Now, we can finally step in to our system, with safety glasses, high viz and safety shoes on. 
+
+```shell
+root@archiso ~ # arch-chroot /mnt
+[root@archiso /]#
+```
+
+Notice the big change. The prompt `root@archiso ~ #` became `[root@archiso /]#` :)
+
+### Timezone
+we need to set our time zone by creating a symbolic link.
+
+```shell
+[root@archiso /]# ln -sfv /usr/share/zoneinfo/Europe/London /etc/localtime
+'/etc/localtime' -> '/usr/share/zoneinfo/Europe/London'
+```
+
+We also want to synchronise our system to the hardware clock.
+
+```shell
+[root@archiso /]# hwclock -vw
+hwclock from util-linux 2.41.1
+System Time: 1750941382.787907
+Trying to open: /dev/rtc0
+Using the rtc interface to the clock.
+Assuming hardware clock is kept in UTC time.
+RTC type: 'rtc_cmos'
+Using delay: 0.500000 seconds
+missed it - 1750941382.791176 is too far past 1750941382.500000 (0.291176 > 0.001000)
+1750941383.500000 is close enough to 1750941383.500000 (0.000000 < 0.002000)
+Set RTC to 1750941383 (1750941382 + 1; refsystime = 1750941382.000000)
+Setting Hardware Clock to 12:36:23 = 1750941383 seconds since 1969
+ioctl(RTC_SET_TIME) was successful.
+Not adjusting drift factor because the --update-drift option was not used.
+New /etc/adjtime data:
+0.000000 1750941382 0.000000
+1750941382
+UTC
+```
+
+### Locale
+
+
+
 
 
 
