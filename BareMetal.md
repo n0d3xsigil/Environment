@@ -953,6 +953,16 @@ root@archiso ~ # arch-chroot /mnt
 
 Notice the big change. The prompt `root@archiso ~ #` became `[root@archiso /]#` :)
 
+### Password time
+Okay, we are now at the stage where we can put a password on the system. We can do that with `passwd`
+
+```shell
+[root@archiso /]# passwd
+New password: notmypassword
+Retype new password: notmypassword
+passwd: password updated successfully
+```
+
 ### Timezone
 we need to set our time zone by creating a symbolic link.
 
@@ -1039,78 +1049,7 @@ And we want to create the hostname. I'm going to use `archibold` this time.
 archibold
 ```
 
-
-### initramfs
-We don't need to run it, but I like to for completeness
-
-```shell
-[root@archiso /]# mkinitcpio -P
-==> Building image from preset: /etc/mkinitcpio.d/linux.preset: 'default'
-==> Using default configuration file: '/etc/mkinitcpio.conf'
-  -> -k /boot/vmlinuz-linux -g /boot/initramfs-linux.img
-==> Starting build: '6.15.3-arch1-1'
-  -> Running build hook: [base]
-  -> Running build hook: [udev]
-  -> Running build hook: [autodetect]
-  -> Running build hook: [microcode]
-  -> Running build hook: [modconf]
-  -> Running build hook: [kms]
-  -> Running build hook: [keyboard]
-  -> Running build hook: [keymap]
-  -> Running build hook: [consolefont]
-==> WARNING: consolefont: no font found in configuration
-  -> Running build hook: [block]
-  -> Running build hook: [filesystems]
-  -> Running build hook: [fsck]
-==> Generating module dependencies
-==> Creating zstd-compressed initcpio image: '/boot/initramfs-linux.img'
-  -> Early uncompressed CPIO image generation successful
-==> Initcpio image generation successful
-==> Building image from preset: /etc/mkinitcpio.d/linux.preset: 'fallback'
-==> Using default configuration file: '/etc/mkinitcpio.conf'
-  -> -k /boot/vmlinuz-linux -g /boot/initramfs-linux-fallback.img -S autodetect
-==> Starting build: '6.15.3-arch1-1'
-  -> Running build hook: [base]
-  -> Running build hook: [udev]
-  -> Running build hook: [microcode]
-  -> Running build hook: [modconf]
-  -> Running build hook: [kms]
-==> WARNING: Possibly missing firmware for module: 'ast'
-  -> Running build hook: [keyboard]
-==> WARNING: Possibly missing firmware for module: 'xhci_pci_renesas'
-  -> Running build hook: [keymap]
-  -> Running build hook: [consolefont]
-==> WARNING: consolefont: no font found in configuration
-  -> Running build hook: [block]
-==> WARNING: Possibly missing firmware for module: 'aic94xx'
-==> WARNING: Possibly missing firmware for module: 'qed'
-==> WARNING: Possibly missing firmware for module: 'bfa'
-==> WARNING: Possibly missing firmware for module: 'qla2xxx'
-==> WARNING: Possibly missing firmware for module: 'qla1280'
-==> WARNING: Possibly missing firmware for module: 'wd719x'
-  -> Running build hook: [filesystems]
-  -> Running build hook: [fsck]
-==> Generating module dependencies
-==> Creating zstd-compressed initcpio image: '/boot/initramfs-linux-fallback.img'
-  -> Early uncompressed CPIO image generation successful
-==> Initcpio image generation successful
-```
-
-We have some warnings, we can hunt these down at a later date, my expereicne is that generally they are warnings and not actually an issue with the installation. 
-
-### Password time
-Okay, we are now at the stage where we can put a password on the system. We can do that with `passwd`
-
-```shell
-[root@archiso /]# passwd
-New password: notmypassword
-Retype new password: notmypassword
-passwd: password updated successfully
-```
-
 ### bootloader
-This is generally where things go to shit for me. 
-
 I am raw dumping at the moment, will format correctly with explanations later
 
 
