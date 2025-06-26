@@ -289,11 +289,9 @@ swapon /dev/md126p2
 ## Installing the base system
 Okay, so we need to install the following at a minimum `base` `linux`, and  `linux-firmware`.
 
-However, we also need a way to connect to the network and also edit files at a minimum. So I will include also `iwd`* and `vim`.
+However, we also need a way to connect to the network and also edit files at a minimum. So I will include also `iwd`, `vim`, `sudo`, and `sshd`.
 
-Apparently I also need to include mdadm for the RAID-0 config.
-
-*I recall having issues with just having iwd, I may revist his later.
+Apparently I also need to include `mdadm` for the RAID-0 config.
 
 ```shell
 root@archiso ~ # pacstrap -K /mnt base linux linux-firmware iwd vim mdadm
