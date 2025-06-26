@@ -87,16 +87,13 @@ For the purpose of setup we can leave it here and go back to setup.
 perform a ping test to a host of your choice, I'm using `archlinux.org` partly because thats the recommendation, but also, I want to make sure I can reach the archlinux infrastructure.
 
 ```shell
-root@archiso ~ # ping -3 -c 4 archlinux.org
+root@archiso ~ # ping -3 -c 1 archlinux.org
 PING archlinux.org (95.217.163.246) 56(84) bytes of data.
-64 bytes from archlinux.org (95.217.163.246): icmp_seq=1 ttl=52 time=47.322 ms
-64 bytes from archlinux.org (95.217.163.246): icmp_seq=2 ttl=52 time=53.098 ms
-64 bytes from archlinux.org (95.217.163.246): icmp_seq=3 ttl=52 time=51.742 ms
-64 bytes from archlinux.org (95.217.163.246): icmp_seq=4 ttl=52 time=51.150 ms
+64 bytes from archlinux.org (95.217.163.246): icmp_seq=1 ttl=52 time=47.971 ms
 
 --- archlinux.org ping statistics ---
-4 packets transmitted, 4 received, 0% packet loss, time 3005ms
-rtt min/avg/max/mdev = 47.322/50.828/53.098/2.143 ms
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 47.971/47.971/47.971/0.000 ms
 ```
 
 Great, we have a connection. 
