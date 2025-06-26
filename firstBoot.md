@@ -7,6 +7,7 @@ Once arch is built, you'll need to log in and get a few things up and running...
 - [Enable Sudo](#enable-sudo)
 - [Disable root](#disable-root)
 - [nvidia hell](#nvidia-hell)
+- [LightDM](#lightdm)
 - [i3 WM](#i3-wm)
 
   
@@ -504,6 +505,171 @@ Thu Jun 26 18:45:25 2025
 ```
 
 Check if the OpenGL renderer is working
+
+## LightDM
+
+We need a thing
+```shell
+[archibold@archibold ~]$ sudo pacman -S lightdm lightdm-gtk-greeter
+[sudo] password for archibold:
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (37) adwaita-cursors-48.1-1  adwaita-fonts-48.2-1  adwaita-icon-theme-48.1-1  adwaita-icon-theme-legacy-46.2-3
+              at-spi2-core-2.56.2-1  avahi-1:0.8+r194+g3f79789-3  dav1d-1.5.1-1  dconf-0.40.0-3  desktop-file-utils-0.28-1
+              duktape-2.7.0-7  gdk-pixbuf2-2.42.12-2  glib-networking-1:2.80.1-1  gsettings-desktop-schemas-48.0-1
+              gsettings-system-schemas-48.0-1  gtk-update-icon-cache-1:4.18.6-1  gtk3-1:3.24.49-2  hicolor-icon-theme-0.18-1
+              iso-codes-4.18.0-1  jbigkit-2.1-8  json-glib-1.10.6-1  lcms2-2.17-1  libcloudproviders-0.3.6-2  libcolord-1.4.7-2
+              libcups-2:2.4.12-2  libdaemon-0.14-6  libjpeg-turbo-3.1.0-1  libproxy-0.5.9-1  librsvg-2:2.60.0-2  libsoup3-3.6.5-1
+              libstemmer-3.0.1-1  libtiff-4.7.0-1  libxklavier-5.4-6  polkit-126-2  shared-mime-info-2.4-2  tinysparql-3.9.2-2
+              lightdm-1:1.32.0-6  lightdm-gtk-greeter-1:2.0.9-1
+
+Total Download Size:    27.47 MiB
+Total Installed Size:  148.53 MiB
+
+:: Proceed with installation? [Y/n] y
+:: Retrieving packages...
+ librsvg-2:2.60.0-2-x86_64                                2.3 MiB  3.27 MiB/s 00:01 [################################################] 100%
+ adwaita-icon-theme-legacy-46.2-3-any                     2.2 MiB  2.63 MiB/s 00:01 [################################################] 100%
+ adwaita-fonts-48.2-1-any                                 2.1 MiB  2.18 MiB/s 00:01 [################################################] 100%
+ iso-codes-4.18.0-1-any                                   3.4 MiB  3.16 MiB/s 00:01 [################################################] 100%
+ tinysparql-3.9.2-2-x86_64                             1063.4 KiB  2.88 MiB/s 00:00 [################################################] 100%
+ gsettings-desktop-schemas-48.0-1-any                   733.3 KiB  1482 KiB/s 00:00 [################################################] 100%
+ dav1d-1.5.1-1-x86_64                                   639.2 KiB  1175 KiB/s 00:01 [################################################] 100%
+ shared-mime-info-2.4-2-x86_64                          614.4 KiB  1969 KiB/s 00:00 [################################################] 100%
+ at-spi2-core-2.56.2-1-x86_64                           572.9 KiB  2003 KiB/s 00:00 [################################################] 100%
+ gtk3-1:3.24.49-2-x86_64                                  8.7 MiB  4.46 MiB/s 00:02 [################################################] 100%
+ libjpeg-turbo-3.1.0-1-x86_64                           568.5 KiB  1238 KiB/s 00:00 [################################################] 100%
+ gdk-pixbuf2-2.42.12-2-x86_64                           518.4 KiB  1168 KiB/s 00:00 [################################################] 100%
+ libtiff-4.7.0-1-x86_64                                 496.1 KiB  1344 KiB/s 00:00 [################################################] 100%
+ avahi-1:0.8+r194+g3f79789-3-x86_64                     426.3 KiB  2001 KiB/s 00:00 [################################################] 100%
+ polkit-126-2-x86_64                                    403.2 KiB  2.09 MiB/s 00:00 [################################################] 100%
+ libsoup3-3.6.5-1-x86_64                                392.6 KiB  2.23 MiB/s 00:00 [################################################] 100%
+ adwaita-cursors-48.1-1-any                             360.0 KiB  1690 KiB/s 00:00 [################################################] 100%
+ libcups-2:2.4.12-2-x86_64                              272.2 KiB  1512 KiB/s 00:00 [################################################] 100%
+ lightdm-1:1.32.0-6-x86_64                              234.5 KiB  1532 KiB/s 00:00 [################################################] 100%
+ lcms2-2.17-1-x86_64                                    220.0 KiB  2.29 MiB/s 00:00 [################################################] 100%
+ adwaita-icon-theme-48.1-1-any                          198.5 KiB  1927 KiB/s 00:00 [################################################] 100%
+ libcolord-1.4.7-2-x86_64                               186.8 KiB  2.40 MiB/s 00:00 [################################################] 100%
+ duktape-2.7.0-7-x86_64                                 176.2 KiB  2026 KiB/s 00:00 [################################################] 100%
+ json-glib-1.10.6-1-x86_64                              172.1 KiB  2.18 MiB/s 00:00 [################################################] 100%
+ glib-networking-1:2.80.1-1-x86_64                      140.4 KiB  2.49 MiB/s 00:00 [################################################] 100%
+ libstemmer-3.0.1-1-x86_64                              135.4 KiB  2.70 MiB/s 00:00 [################################################] 100%
+ dconf-0.40.0-3-x86_64                                  105.4 KiB  2.10 MiB/s 00:00 [################################################] 100%
+ lightdm-gtk-greeter-1:2.0.9-1-x86_64                    93.5 KiB  1949 KiB/s 00:00 [################################################] 100%
+ libcloudproviders-0.3.6-2-x86_64                        63.6 KiB  3.88 MiB/s 00:00 [################################################] 100%
+ libxklavier-5.4-6-x86_64                                68.0 KiB  1511 KiB/s 00:00 [################################################] 100%
+ jbigkit-2.1-8-x86_64                                    52.2 KiB  2.55 MiB/s 00:00 [################################################] 100%
+ desktop-file-utils-0.28-1-x86_64                        42.5 KiB  1773 KiB/s 00:00 [################################################] 100%
+ libproxy-0.5.9-1-x86_64                                 29.5 KiB  1134 KiB/s 00:00 [################################################] 100%
+ libdaemon-0.14-6-x86_64                                 19.2 KiB  1129 KiB/s 00:00 [################################################] 100%
+ gtk-update-icon-cache-1:4.18.6-1-x86_64                 16.8 KiB   648 KiB/s 00:00 [################################################] 100%
+ hicolor-icon-theme-0.18-1-any                           13.0 KiB   814 KiB/s 00:00 [################################################] 100%
+ gsettings-system-schemas-48.0-1-any                      5.9 KiB   279 KiB/s 00:00 [################################################] 100%
+ Total (37/37)                                           27.5 MiB  10.3 MiB/s 00:03 [################################################] 100%
+(37/37) checking keys in keyring                                                    [################################################] 100%
+(37/37) checking package integrity                                                  [################################################] 100%
+(37/37) loading package files                                                       [################################################] 100%
+(37/37) checking for file conflicts                                                 [################################################] 100%
+(37/37) checking available disk space                                               [################################################] 100%
+:: Processing package changes...
+( 1/37) installing iso-codes                                                        [################################################] 100%
+( 2/37) installing libxklavier                                                      [################################################] 100%
+( 3/37) installing duktape                                                          [################################################] 100%
+( 4/37) installing polkit                                                           [################################################] 100%
+( 5/37) installing lightdm                                                          [################################################] 100%
+Optional dependencies for lightdm
+    accountsservice: Enhanced user accounts handling
+    lightdm-gtk-greeter: GTK greeter [pending]
+    xorg-server-xephyr: LightDM test mode [installed]
+( 6/37) installing adwaita-fonts                                                    [################################################] 100%
+( 7/37) installing hicolor-icon-theme                                               [################################################] 100%
+( 8/37) installing adwaita-icon-theme-legacy                                        [################################################] 100%
+( 9/37) installing adwaita-cursors                                                  [################################################] 100%
+(10/37) installing adwaita-icon-theme                                               [################################################] 100%
+(11/37) installing dconf                                                            [################################################] 100%
+(12/37) installing gsettings-system-schemas                                         [################################################] 100%
+(13/37) installing gsettings-desktop-schemas                                        [################################################] 100%
+(14/37) installing at-spi2-core                                                     [################################################] 100%
+(15/37) installing desktop-file-utils                                               [################################################] 100%
+(16/37) installing libjpeg-turbo                                                    [################################################] 100%
+Optional dependencies for libjpeg-turbo
+    java-runtime>11: for TurboJPEG Java wrapper
+(17/37) installing jbigkit                                                          [################################################] 100%
+(18/37) installing libtiff                                                          [################################################] 100%
+Optional dependencies for libtiff
+    freeglut: for using tiffgt [installed]
+(19/37) installing shared-mime-info                                                 [################################################] 100%
+(20/37) installing gdk-pixbuf2                                                      [################################################] 100%
+Optional dependencies for gdk-pixbuf2
+    libwmf: Load .wmf and .apm
+    libopenraw: Load .dng, .cr2, .crw, .nef, .orf, .pef, .arw, .erf, .mrw, and .raf
+    libavif: Load .avif
+    libheif: Load .heif, .heic, and .avif
+    libjxl: Load .jxl
+    librsvg: Load .svg, .svgz, and .svg.gz [pending]
+    webp-pixbuf-loader: Load .webp
+(21/37) installing libcloudproviders                                                [################################################] 100%
+(22/37) installing lcms2                                                            [################################################] 100%
+(23/37) installing libcolord                                                        [################################################] 100%
+(24/37) installing libdaemon                                                        [################################################] 100%
+(25/37) installing avahi                                                            [################################################] 100%
+Optional dependencies for avahi
+    gtk3: avahi-discover, avahi-discover-standalone, bshell, bssh, bvnc [pending]
+    libevent: libevent bindings [installed]
+    nss-mdns: NSS support for mDNS
+    python-dbus: avahi-bookmarks, avahi-discover
+    python-gobject: avahi-bookmarks, avahi-discover
+    python-twisted: avahi-bookmarks
+    qt5-base: qt5 bindings
+(26/37) installing libcups                                                          [################################################] 100%
+(27/37) installing dav1d                                                            [################################################] 100%
+Optional dependencies for dav1d
+    dav1d-doc: HTML documentation
+(28/37) installing librsvg                                                          [################################################] 100%
+(29/37) installing json-glib                                                        [################################################] 100%
+(30/37) installing libproxy                                                         [################################################] 100%
+(31/37) installing glib-networking                                                  [################################################] 100%
+(32/37) installing libsoup3                                                         [################################################] 100%
+Optional dependencies for libsoup3
+    samba: Windows Domain SSO
+(33/37) installing libstemmer                                                       [################################################] 100%
+(34/37) installing tinysparql                                                       [################################################] 100%
+(35/37) installing gtk-update-icon-cache                                            [################################################] 100%
+(36/37) installing gtk3                                                             [################################################] 100%
+Optional dependencies for gtk3
+    evince: Default print preview command
+(37/37) installing lightdm-gtk-greeter                                              [################################################] 100%
+:: Running post-transaction hooks...
+( 1/15) Creating system user accounts...
+Creating group 'polkitd' with GID 102.
+Creating group 'avahi' with GID 971.
+Creating user 'avahi' (Avahi mDNS/DNS-SD daemon) with UID 971 and GID 971.
+Creating group 'lightdm' with GID 970.
+Creating user 'lightdm' (Light Display Manager) with UID 970 and GID 970.
+Creating user 'polkitd' (User for polkitd) with UID 102 and GID 102.
+( 2/15) Reloading system manager configuration...
+( 3/15) Reloading user manager configuration...
+( 4/15) Creating temporary files...
+( 5/15) Arming ConditionNeedsUpdate...
+( 6/15) Updating the MIME type database...
+( 7/15) Reloading system bus configuration...
+( 8/15) Updating fontconfig cache...
+( 9/15) Probing GDK-Pixbuf loader modules...
+(10/15) Updating GIO module cache...
+(11/15) Compiling GSettings XML schema files...
+(12/15) Probing GTK3 input method modules...
+(13/15) Updating icon theme caches...
+(14/15) Updating the desktop file MIME type cache...
+(15/15) Updating X fontdir indices...
+```
+
+Then enable that shit
+
+```shell
+[archibold@archibold ~]$ sudo systemctl enable --now lightdm
+Created symlink '/etc/systemd/system/display-manager.service' → '/usr/lib/systemd/system/lightdm.service'.
+```
 
 
 ## i3 WM
