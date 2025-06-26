@@ -1095,7 +1095,7 @@ Updating `loader.conf`
 ```shell
 [root@archiso /]# vim /boot/loader/loader.conf; cat /boot/loader/loader.conf
 default archibold
-timeout 3
+timeout 0
 console-mode max
 editor no
 ```
