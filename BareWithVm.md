@@ -7,20 +7,16 @@
 - Connect network (Wireless)
 - update the clock
 - Connect remotely
-
-
-
-
-
-
-
-
+[**_Needs review..._**]
 
 
 ## Guide
+
 Start by following step 1.0 through 1.4
 
+
 ## Console keyboard layout
+
 We will use UK.
 ```shell
 root@archiso ~ # loadkeys uk
@@ -90,6 +86,7 @@ Next we can perform `station _wlan0_ get-networks
 
 ```
 
+
 The beauty of iwd is that you can tab to autocompleted. Which is great for my SSID that is randomly generated!
 
 To connect to the AP just `station _wlan0_ connect %SSID%`
@@ -100,7 +97,9 @@ Type the network passprhase for SSID-abc psk
 Passphrase: ***
 [iwd]# quit
 ```
+
 ping
+
 For the purpose of setup we can leave it here and go back to setup.
 
 perform a ping test to a host of your choice, I'm using `archlinux.org` partly because thats the recommendation, but also, I want to make sure I can reach the archlinux infrastructure.
@@ -117,7 +116,9 @@ rtt min/avg/max/mdev = 47.971/47.971/47.971/0.000 ms
 
 Great, we have a connection. 
 
+
 ## update the clock
+
 We use `timedatectl` to ensure the clock is sync'd
 
 ```shell
@@ -135,12 +136,15 @@ Great, Moving on...
 
 
 ## Connect remotely
+
 I want to connect via **`SSH`** to this ArchISO. to do this I need the IP
 
 ```Shell
 root@archiso ~ # ip addr | grep -i wlan0 | grep -i inet
     inet 192.168.1.21/24 metric 600 brd 192.168.1.255 scope global dynamic wlan0
 ```
+
+
 Next I need to set the `root` password. 
 
 ```Shell
@@ -150,7 +154,9 @@ Retype new password:    password
 passwd: password updated successfully
 ```
 
+
 So we now know our IP and our password is set, lets try connecting
+
 ```PowerShell
 PS C:\Users\UserID> ssh root@192.168.1.21
 The authenticity of host '192.168.1.21 (192.168.1.21)' can't be established.
@@ -175,6 +181,7 @@ root@archiso ~ #
 
 
 ## Partitioning Disks
+
 I need to be careful here, the documentation on the archlinux website states not to build using raid, but I want to so I'm going to try it. Anyway
 
 First we can run `lsblk` to show what devices are available.
@@ -194,13 +201,16 @@ nvme1n1 259:1    0 953.9G  0 disk
 └─md127   9:127  0     0B  0
 ```
 
+
 I am fortunate, I am on a system that has a RAID controller that is supported by Linux. So we can see that `md126` is `1.9T`. so we're going to partition this using `cfdisk`.
 
 ```shell
 root@archiso ~ # cfdisk /dev/md126
 ```
 
+
 ### Boot partition
+
 1. Select **`[   New   ]`** and press return to create the boot partition
 2. Enter 512M as the partition size and press return on the keybaord
 3. Select and **`[  Type  ]`** and press return to select the type
@@ -209,6 +219,7 @@ root@archiso ~ # cfdisk /dev/md126
 
 
 ### Swap partition
+
 1. Move down to select the _`Free Space`_
 2. Select **`[   New   ]`** and press return to create the swap partition
 3. Enter 16G as the partition size and press return on the keybaord
@@ -218,6 +229,7 @@ root@archiso ~ # cfdisk /dev/md126
 
 
 ### Root filesystem
+
 1. Move down to select the _`Free Space`_
 2. Select **`[   New   ]`** and press return to create the boot partition
 3. Enter 16G as the partition size and press return on the keybaord
@@ -225,6 +237,7 @@ root@archiso ~ # cfdisk /dev/md126
 
 
 ### Home partition
+
 1. Move down to select the _`Free Space`_
 2. Select **`[   New   ]`** and press return to create the boot partition
 3. Enter 100G as the partition size and press return on the keybaord
@@ -232,6 +245,7 @@ root@archiso ~ # cfdisk /dev/md126
 
 
 ### ISOs partition
+
 1. Move down to select the _`Free Space`_
 2. Select **`[   New   ]`** and press return to create the boot partition
 3. Enter 100G as the partition size and press return on the keybaord
@@ -239,18 +253,21 @@ root@archiso ~ # cfdisk /dev/md126
 
 
 ### VM partition
+
 1. Move down to select the _`Free Space`_
 2. Select **`[   New   ]`** and press return to create the boot partition
 4. The system will default to the remaining storage, accept this by pressing return on the keyboard
 5. Leave the type as the default `Linux filesystem`.
 
 ### Safe partition format
+
 1. Select **`[  Write ]`** and press return on the keyboard
 2. Type `yes` to the are you sure question
 3. Finally select **`[  Quit  ]`** and press return
 
 
 ### Verify format
+
 Now we can run `lsblk` again to verify that the partitions have been created and saved correctly.
 
 ```shell
@@ -280,6 +297,7 @@ nvme1n1     259:1    0 953.9G  0 disk
 └─md127       9:127  0     0B  0
 ```
 
+
 Okay so now we have the following structure.
 
 |     Device     |   Size   |           Description           |            Mount            |    Format    |
@@ -294,7 +312,9 @@ Okay so now we have the following structure.
 
 
 ## Formatting partitions
+
 ### │ `/dev/md126p1` |     512M | EFI Boot partition              | `/boot`                     | **FAT32**    |
+
 The boot partition will be formatted with **`FAT32`**.
 
 ```Shell
@@ -313,6 +333,7 @@ Volume ID is 73e4e2f2, no volume label.
 
 
 ### │ `/dev/md126p2` |      16G | Linux swap parition             | `[swap]`                    | **swap**     |
+
 The swap partition will be formatted with **`swap`**.
 
 ```Shell
@@ -323,6 +344,7 @@ no label, UUID=19ad20c3-86d7-48ac-a673-f825f0400607
 
 
 ### │ `/dev/md126p3` |      50G | Arch host system                | `/`                         | **ext4**     |
+
 The Arch host partition will be formatted with **`ext4`**.
 
 ```Shell
@@ -354,6 +376,7 @@ Writing superblocks and filesystem accounting information: done
 ```
 
 ### │ `/dev/md126p4` |     100G | Home partition                  | `/home`                     | **ext4**     |
+
 The home partition will be formatted with **`ext4`**.
 
 ```Shell
@@ -386,6 +409,7 @@ Writing superblocks and filesystem accounting information: done
 
 
 ### │ `/dev/md126p5` |     100G | ISO library                     | `/var/lib/libvirt/isos`     | **ext4**     |
+
 The ISOs partition will be formatted with **`ext4`**.
 
 ```Shell
@@ -418,6 +442,7 @@ Writing superblocks and filesystem accounting information: done
 
 
 ### │ `/dev/md126p6` |     1.6T | VM disk images                  | `/var/lib/libvirt/images `  | **btrfs**   |
+
 And finally, the VM images partition will be formatted with **`btrfs`**.
 
 ```Shell
@@ -1085,17 +1110,23 @@ Creating user 'alpm' (Arch Linux Package Management) with UID 972 and GID 972.
 pacstrap -K /mnt base linux linux-firmware iwd vim sudo openssh mdadm  32.77s user 25.66s system 64% cpu 1:31.12 total
 ```
 
+**_Note_**: I'm going to keep this in for the time being for later review, however, this is not required by any measure ;)
 
-I'm going to keep this in for the time being for later review, however, this is not required by any measure ;)
 
 ## Configure the sytem
+
 Lets create the fstab using `genfstab` tool
+
+
+### Generate `/mnt/etc/fstab`
 
 ```shell
 root@archiso ~ # genfstab -U /mnt >> /mnt/etc/fstab
 ```
 
+
 ### chroot time
+
 Now, we can finally step in to our system, with safety glasses, high viz and safety shoes on. 
 
 ```shell
@@ -1105,7 +1136,9 @@ root@archiso ~ # arch-chroot /mnt
 
 Notice the big change. The prompt `root@archiso ~ #` became `[root@archiso /]#` :)
 
+
 ### Password time
+
 Okay, we are now at the stage where we can put a password on the system. We can do that with `passwd`
 
 ```shell
@@ -1115,7 +1148,9 @@ Retype new password: notmypassword
 passwd: password updated successfully
 ```
 
+
 ### Timezone
+
 we need to set our time zone by creating a symbolic link.
 
 ```shell
@@ -1123,30 +1158,32 @@ we need to set our time zone by creating a symbolic link.
 '/etc/localtime' -> '/usr/share/zoneinfo/Europe/London'
 ```
 
+
 We also want to synchronise our system to the hardware clock.
 
 ```shell
 [root@archiso /]# hwclock -vw
 hwclock from util-linux 2.41.1
-System Time: 1750941382.787907
+System Time: 1753209475.042348
 Trying to open: /dev/rtc0
 Using the rtc interface to the clock.
 Assuming hardware clock is kept in UTC time.
 RTC type: 'rtc_cmos'
 Using delay: 0.500000 seconds
-missed it - 1750941382.791176 is too far past 1750941382.500000 (0.291176 > 0.001000)
-1750941383.500000 is close enough to 1750941383.500000 (0.000000 < 0.002000)
-Set RTC to 1750941383 (1750941382 + 1; refsystime = 1750941382.000000)
-Setting Hardware Clock to 12:36:23 = 1750941383 seconds since 1969
+1753209475.500000 is close enough to 1753209475.500000 (0.000000 < 0.001000)
+Set RTC to 1753209475 (1753209475 + 0; refsystime = 1753209475.000000)
+Setting Hardware Clock to 18:37:55 = 1753209475 seconds since 1969
 ioctl(RTC_SET_TIME) was successful.
 Not adjusting drift factor because the --update-drift option was not used.
 New /etc/adjtime data:
-0.000000 1750941382 0.000000
-1750941382
+0.000000 1753209475 0.000000
+1753209475
 UTC
 ```
 
+
 ### Locale
+
 we can use `vim` to edit the local file under `/etc/locale.conf`.
 
 Before:
@@ -1158,6 +1195,7 @@ Before:
 [root@archiso /]# vim /etc/locale.gen
 ```
 
+
 Find the locale for your country / region. For example mine is `en_GB.UTF-8 UTF-8`. Then uncomment by remiving the `#`
 
 If using vim, you can use `:x` to save the file and exit.
@@ -1165,10 +1203,14 @@ If using vim, you can use `:x` to save the file and exit.
 After:
 
 ```shell
-[root@archiso /]# cat /etc/locale.gen | grep "en_GB"
+[root@archiso /]# vim /etc/locale.gen
+[...]
+[root@archiso /]# cat /etc/locale.gen | grep -i en_gb
 en_GB.UTF-8 UTF-8
 #en_GB ISO-8859-1
+[root@archiso /]#
 ```
+
 
 Then you can perform the locale gen
 
@@ -1179,31 +1221,38 @@ Generating locales...
 Generation complete.
 ```
 
+
 Next we need to create the LANG variable
 
 ```shell
 [root@archiso /]# echo "LANG=en_GB.UTF-8" > /etc/locale.conf; cat /etc/locale.conf
 LANG=en_GB.UTF-8
+[root@archiso /]#
 ```
+
 
 We also want to set the kemap perminantly
 
 ```shell
-[root@archiso /]# echo "KEYMAP=uk" > /etc/vconsole.conf; cat /etc/vconsole.conf
+[root@archiso /]#  echo "KEYMAP=uk" > /etc/vconsole.conf; cat /etc/vconsole.conf
 KEYMAP=uk
 ```
 
+
 ### Set hostname
+
 And we want to create the hostname. I'm going to use `archibold` this time.
 
 ```shell
 [root@archiso /]# echo "archibold" > /etc/hostname; cat /etc/hostname
 archibold
+[root@archiso /]#
 ```
 
-### bootloader
-I am raw dumping at the moment, will format correctly with explanations later
 
+### bootloader
+
+Let's verify that our `boot` partition is mounted, is formatted as `vfat`
 
 ```shell
 [root@archiso /]# mount | grep boot
@@ -1211,11 +1260,15 @@ I am raw dumping at the moment, will format correctly with explanations later
 ```
 
 
+We no want to verify it is atleast 512mb
+
 ```shell
 [root@archiso /]# df -h boot
 Filesystem      Size  Used Avail Use% Mounted on
-/dev/md126p1    5.0G  188M  4.9G   4% /boot
+/dev/md126p1    511M  189M  323M  37% /boot
 ```
+
+Now to start the boot loader installation
 
 ```shell
 [root@archiso /]# bootctl install
@@ -1233,6 +1286,8 @@ Copied "/usr/lib/systemd/boot/efi/systemd-bootx64.efi" to "/boot/EFI/BOOT/BOOTX6
 Random seed file /boot/loader/random-seed successfully written (32 bytes).
 ````
 
+
+**`<MOVE "item" WHEN "WhenIremember">`**
 Obviously we don't want security holes., we'll come back to this but it is to do with the configuraiton of the chrooted environment. We can fix by closing down the permissions later
 
 ```shell
@@ -1240,6 +1295,7 @@ chmod 0700 /boot
 chmod 0700 /boot/loader
 chmod 0600 /boot/loader/random-seed
 ```
+**`</MOVE "item" WHEN "WhenIremember">`**
 
 
 Updating `loader.conf`
@@ -1251,6 +1307,7 @@ timeout 0
 console-mode max
 editor no
 ```
+
 
 Lets set the compression to `gzip` and enable the hooks
 
@@ -1270,6 +1327,7 @@ HOOKS=(base systemd autodetect modconf block mdadm_udev filesystems keyboard fsc
 # is used for Linux ≥ 5.9 and gzip compression is used for Linux < 5.9.
 COMPRESSION="gzip"
 ```
+
 
 configure `linux.preset`
 
@@ -1300,6 +1358,7 @@ ALL_kver="/boot/vmlinuz-linux"
 default_uki="/boot/EFI/Linux/archibold.efi"
 ```
 
+
 Grab the uuid for the root partition
 
 ```shell
@@ -1316,6 +1375,7 @@ fix the kernel cmdline
 root=PARTUUID=75bd02ea-c59a-45be-8b64-e38e088c68ba rw quiet loglevel=3
 ```
 
+
 Rebuild UKI
 
 ```shell
@@ -1323,7 +1383,7 @@ Rebuild UKI
 ==> Building image from preset: /etc/mkinitcpio.d/linux.preset: 'default'
 ==> Using configuration file: '/etc/mkinitcpio.conf'
   -> -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -U /boot/EFI/Linux/archibold.efi
-==> Starting build: '6.15.3-arch1-1'
+==> Starting build: '6.15.7-arch1-1'
   -> Running build hook: [base]
   -> Running build hook: [systemd]
   -> Running build hook: [autodetect]
@@ -1341,6 +1401,7 @@ Rebuild UKI
   -> Using cmdline file: '/etc/kernel/cmdline'
 ==> Unified kernel image generation successful
 ```
+
 
 Create the boot entry
 
@@ -1371,6 +1432,7 @@ verify boot entries
           efi: /boot//EFI/Linux/archibold.efi
 ```
 
+
 Verify arch is available
 
 ```shell
@@ -1378,12 +1440,14 @@ Verify arch is available
 -rwxr-xr-x 1 root root 26M Jun 25 13:42 /boot/EFI/Linux/archibold.efi
 ```
 
+
 Verify arch is in the loader entries
 
 ```shell
 [root@archiso /]# ls /boot/loader/entries/
 archibold.conf
 ```
+
 
 Verify the selected entry
 
@@ -1407,13 +1471,13 @@ Default Boot Loader Entry:
            id: archibold.efi
        source: /boot//EFI/Linux/archibold.efi (on the EFI System Partition)
      sort-key: arch
-      version: 6.15.3-arch1-1
+      version: 6.15.7-arch1-1
         linux: /boot//EFI/Linux/archibold.efi
       options: root=PARTUUID=75bd02ea-c59a-45be-8b64-e38e088c68ba rw quiet loglevel=3
 ```
 
-### Reboot time.
 
+### Reboot time.
 
 ```shell
 [root@archiso /]# exit
@@ -1427,16 +1491,25 @@ root@archiso ~ # shutdown -h now
 
 
 
+## Success
+
+This process has been tested multiple times and works each time, and it will do until I need it most :D
 
 
-## How to re-choot
+
+
+## Troubleshooting
+
+Troubleshooting can be done via `arch-chroot` should boot issues occour. 
 Set keyboard layout
+
 
 ```shell
 root@archiso ~ # loadkeys uk
 ```
 
 Conenct the wireless
+
 ```
 root@archiso ~ # iwctl
 NetworkConfigurationEnabled: disabled
