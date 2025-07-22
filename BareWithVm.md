@@ -627,10 +627,10 @@ I think I'm happy with that too. Onto installing the base
 
 Okay, so we need to install the following at a minimum `base` `linux`, and  `linux-firmware`. 
 
-In addition to that we also want to make our life post build a little easier so I also install `iwd`, `vim`, `sudo`, `openssh`, `ufw`  and `mdadm`
+In addition to that we also want to make our life post build a little easier so I also install `iwd`, `vim`, `sudo`, `openssh`, `ufw`, `mdadm`, `xorg-server`, `xorg-xinit`, `openbox`, `xterm`, `rofi`, `lightdm`, and `lightdm-gtk-greeter`
 
 ```shell
-1 root@archiso ~ # pacstrap -K /mnt base linux linux-firmware iwd vim sudo openssh ufw mdadm
+1 root@archiso ~ # pacstrap -K /mnt base linux linux-firmware iwd vim sudo openssh ufw mdadm xorg-server xorg-xinit openbox xterm rofi lightdm lightdm-gtk-greeter
 ==> Creating install root at /mnt
 ==> Installing packages to /mnt
 :: Synchronizing package databases...
