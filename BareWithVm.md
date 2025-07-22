@@ -1,4 +1,23 @@
- ## Guide
+# Bare metal build with Virtualisation
+
+## Contents
+- [Guide](#guide)
+- Console keyboard layout
+- Verify boot mode
+- Connect network (Wireless)
+- update the clock
+- Connect remotely
+
+
+
+
+
+
+
+
+
+
+## Guide
 Start by following step 1.0 through 1.4
 
 ## Console keyboard layout
@@ -114,10 +133,51 @@ System clock synchronized: yes
 
 Great, Moving on...
 
+
+## Connect remotely
+I want to connect via **`SSH`** to this ArchISO. to do this I need the IP
+
+```Shell
+root@archiso ~ # ip addr | grep -i wlan0 | grep -i inet
+    inet 192.168.1.21/24 metric 600 brd 192.168.1.255 scope global dynamic wlan0
+```
+Next I need to set the `root` password. 
+
+```Shell
+127 root@archiso ~ # passwd
+New password:           password
+Retype new password:    password
+passwd: password updated successfully
+```
+
+So we now know our IP and our password is set, lets try connecting
+```PowerShell
+PS C:\Users\UserID> ssh root@192.168.1.21
+The authenticity of host '192.168.1.21 (192.168.1.21)' can't be established.
+ED25519 key fingerprint is SHA256:uvCDIgUHdr/PuN5ffwD9bniye8Kdg4tk-FhbFPeIJjtI.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.1.21' (ED25519) to the list of known hosts.
+root@192.168.1.21's password:
+To install Arch Linux follow the installation guide:
+https://wiki.archlinux.org/title/Installation_guide
+
+For Wi-Fi, authenticate to the wireless network using the iwctl utility.
+For mobile broadband (WWAN) modems, connect with the mmcli utility.
+Ethernet, WLAN and WWAN interfaces using DHCP should work automatically.
+
+After connecting to the internet, the installation guide can be accessed
+via the convenience script Installation_guide.
+
+
+root@archiso ~ #
+```
+
+
 ## Partitioning Disks
 I need to be careful here, the documentation on the archlinux website states not to build using raid, but I want to so I'm going to try it. Anyway
 
-First we can run `lsblk` to show what devices are available
+First we can run `lsblk` to show what devices are available.
 
 ```shell
 root@archiso ~ # lsblk
@@ -134,7 +194,7 @@ nvme1n1 259:1    0 953.9G  0 disk
 └─md127   9:127  0     0B  0
 ```
 
-So we can see that `md126` is `1.9T`. so we're going to partition this using `cfdisk`.
+I am fortunate, I am on a system that has a RAID controller that is supported by Linux. So we can see that `md126` is `1.9T`. so we're going to partition this using `cfdisk`.
 
 ```shell
 root@archiso ~ # cfdisk /dev/md126
@@ -142,31 +202,55 @@ root@archiso ~ # cfdisk /dev/md126
 
 ### Boot partition
 1. Select **`[   New   ]`** and press return to create the boot partition
-2. Enter 5G as the partition size and press return on the keybaord
+2. Enter 512M as the partition size and press return on the keybaord
 3. Select and **`[  Type  ]`** and press return to select the type
 4. Find and select **`EFI System`** and press return on the keyboard
     - The type will change to `EFI System`
 
+
 ### Swap partition
 1. Move down to select the _`Free Space`_
 2. Select **`[   New   ]`** and press return to create the swap partition
-3. Enter 256G as the partition size and press return on the keybaord
+3. Enter 16G as the partition size and press return on the keybaord
 4. Select and **`[  Type  ]`** and press return to select the type
 5. Find and select **`Linux swap`** and press return on the keyboard
     - The type will change to `Linux swap`
-  
+
 
 ### Root filesystem
 1. Move down to select the _`Free Space`_
 2. Select **`[   New   ]`** and press return to create the boot partition
-3. The system will default to the remaining storage, accept this by pressing return on the keyboard
-4. Leave the type as the default `Linux filesystem`.
+3. Enter 16G as the partition size and press return on the keybaord
+5. Leave the type as the default `Linux filesystem`.
+
+
+### Home partition
+1. Move down to select the _`Free Space`_
+2. Select **`[   New   ]`** and press return to create the boot partition
+3. Enter 100G as the partition size and press return on the keybaord
+5. Leave the type as the default `Linux filesystem`.
+
+
+### ISOs partition
+1. Move down to select the _`Free Space`_
+2. Select **`[   New   ]`** and press return to create the boot partition
+3. Enter 100G as the partition size and press return on the keybaord
+5. Leave the type as the default `Linux filesystem`.
+
+
+### VM partition
+1. Move down to select the _`Free Space`_
+2. Select **`[   New   ]`** and press return to create the boot partition
+4. The system will default to the remaining storage, accept this by pressing return on the keyboard
+5. Leave the type as the default `Linux filesystem`.
 
 ### Safe partition format
 1. Select **`[  Write ]`** and press return on the keyboard
 2. Type `yes` to the are you sure question
 3. Finally select **`[  Quit  ]`** and press return
 
+
+### Verify format
 Now we can run `lsblk` again to verify that the partitions have been created and saved correctly.
 
 ```shell
@@ -178,31 +262,69 @@ sda           8:0    1  14.9G  0 disk
 └─sda2        8:2    1   175M  0 part
 nvme0n1     259:0    0 953.9G  0 disk
 ├─md126       9:126  0   1.9T  0 raid0
-│ ├─md126p1 259:5    0     5G  0 part
-│ ├─md126p2 259:6    0   256G  0 part
-│ └─md126p3 259:7    0   1.6T  0 part
+│ ├─md126p1 259:2    0   512M  0 part
+│ ├─md126p2 259:9    0    16G  0 part
+│ ├─md126p3 259:10   0    50G  0 part
+│ ├─md126p4 259:11   0   100G  0 part
+│ ├─md126p5 259:12   0   100G  0 part
+│ └─md126p6 259:13   0   1.6T  0 part
 └─md127       9:127  0     0B  0
 nvme1n1     259:1    0 953.9G  0 disk
 ├─md126       9:126  0   1.9T  0 raid0
-│ ├─md126p1 259:5    0     5G  0 part
-│ ├─md126p2 259:6    0   256G  0 part
-│ └─md126p3 259:7    0   1.6T  0 part
+│ ├─md126p1 259:2    0   512M  0 part
+│ ├─md126p2 259:9    0    16G  0 part
+│ ├─md126p3 259:10   0    50G  0 part
+│ ├─md126p4 259:11   0   100G  0 part
+│ ├─md126p5 259:12   0   100G  0 part
+│ └─md126p6 259:13   0   1.6T  0 part
 └─md127       9:127  0     0B  0
 ```
 
 Okay so now we have the following structure.
 
-|     Device     |   Size   |           Description           |
-|----------------|----------|---------------------------------|
-| `/dev/md126p1` |      5Gb | EFI Boot partition              |
-| `/dev/md126p2` |    256Gb | Linux swap parition             |
-| `/dev/md126p3` |  1,638Gb | Linux `/` (`root`) file system  |
+|     Device     |   Size   |           Description           |            Mount            |    Format    |
+|----------------|----------|---------------------------------|-----------------------------|--------------|
+│ `/dev/md126p1` |     512M | EFI Boot partition              | `/boot`                     | **FAT32**    |
+│ `/dev/md126p2` |      16G | Linux swap parition             | `[swap]`                    | **swap**     |
+│ `/dev/md126p3` |      50G | Arch host system                | `/`                         | **ext4**     |
+│ `/dev/md126p4` |     100G | Home partition                  | `/home`                     | **ext4**     |
+│ `/dev/md126p5` |     100G | ISO library                     | `/var/lib/libvirt/isos`     | **ext4**     |
+│ `/dev/md126p6` |     1.6T | VM disk images                  | `/var/lib/libvirt/images `  | **btrfs**    |
+
+
 
 ## Formatting partitions
-### Root
-The root partiton is the foundation of the system. We will use the latest revision of the `ext` format (`ext4`)
+### │ `/dev/md126p1` |     512M | EFI Boot partition              | `/boot`                     | **FAT32**    |
+The boot partition will be formatted with **`FAT32`**.
 
-```shell
+```Shell
+root@archiso ~ # mkfs.fat -v -F 32 /dev/md126p1
+mkfs.fat 4.2 (2021-01-31)
+/dev/md126p1 has 2 heads and 4 sectors per track,
+hidden sectors 0x0800;
+logical sector size is 512,
+using 0xf8 media descriptor, with 1048576 sectors;
+drive number 0x80;
+filesystem has 2 32-bit FATs and 8 sectors per cluster.
+FAT size is 1024 sectors, and provides 130812 clusters.
+There are 32 reserved sectors.
+Volume ID is 73e4e2f2, no volume label.
+```
+
+
+### │ `/dev/md126p2` |      16G | Linux swap parition             | `[swap]`                    | **swap**     |
+The swap partition will be formatted with **`swap`**.
+
+```Shell
+root@archiso ~ # mkswap --verbose /dev/md126p2
+Setting up swapspace version 1, size = 16 GiB (17179865088 bytes)
+no label, UUID=19ad20c3-86d7-48ac-a673-f825f0400607
+```
+
+### │ `/dev/md126p3` |      50G | Arch host system                | `/`                         | **ext4**     |
+The Arch host partition will be formatted with **`ext4`**.
+
+```Shell
 root@archiso ~ # mkfs.ext4 -v /dev/md126p3
 mke2fs 1.47.2 (1-Jan-2025)
 fs_types for mke2fs.conf resolution: 'ext4'
@@ -212,49 +334,118 @@ OS type: Linux
 Block size=4096 (log=2)
 Fragment size=4096 (log=2)
 Stride=16 blocks, Stripe width=32 blocks
-107921408 inodes, 431681024 blocks
-21584051 blocks (5.00%) reserved for the super user
+3276800 inodes, 13107200 blocks
+655360 blocks (5.00%) reserved for the super user
 First data block=0
-Maximum filesystem blocks=2579496960
-13174 block groups
+Maximum filesystem blocks=2162163712
+400 block groups
 32768 blocks per group, 32768 fragments per group
 8192 inodes per group
-Filesystem UUID: 47e3872f-46c3-45c1-9075-b063fd355ae0
+Filesystem UUID: 8cbce5d0-3ea1-463f-b03e-56e39245f8a9
 Superblock backups stored on blocks:
         32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
-        4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,
-        102400000, 214990848
+        4096000, 7962624, 11239424
 
 Allocating group tables: done
 Writing inode tables: done
-Creating journal (262144 blocks): done
+Creating journal (65536 blocks): done
 Writing superblocks and filesystem accounting information: done
 ```
 
-### Swap
-Next we will enable the swap patition usig `mkswap`
+### │ `/dev/md126p4` |     100G | Home partition                  | `/home`                     | **ext4**     |
+The home partition will be formatted with **`ext4`**.
 
-```shell
-root@archiso ~ # mkswap --verbose /dev/md126p2
-Setting up swapspace version 1, size = 256 GiB (274877902848 bytes)
-no label, UUID=97e3a8be-7128-4cbe-8ddc-0dcccaca7594
+```Shell
+root@archiso ~ # mkfs.ext4 -v /dev/md126p4
+mke2fs 1.47.2 (1-Jan-2025)
+fs_types for mke2fs.conf resolution: 'ext4'
+Discarding device blocks: done
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=16 blocks, Stripe width=32 blocks
+6553600 inodes, 26214400 blocks
+1310720 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=2174746624
+800 block groups
+32768 blocks per group, 32768 fragments per group
+8192 inodes per group
+Filesystem UUID: 00324105-a6e1-467e-a7b6-8e89b72dc41c
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+        4096000, 7962624, 11239424, 20480000, 23887872
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (131072 blocks): done
+Writing superblocks and filesystem accounting information: done
 ```
 
-### Boot
-We are using an EFI partiton on GPT so we want to format the partition as `FAT32`
+### │ `/dev/md126p5` |     100G | ISO library                     | `/var/lib/libvirt/isos`     | **ext4**     |
+The ISOs partition will be formatted with **`ext4`**.
 
-```shell
-root@archiso ~ # mkfs.fat -v -F 32 /dev/md126p1
-mkfs.fat 4.2 (2021-01-31)
-/dev/md126p1 has 2 heads and 4 sectors per track,
-hidden sectors 0x0800;
-logical sector size is 512,
-using 0xf8 media descriptor, with 10485760 sectors;
-drive number 0x80;
-filesystem has 2 32-bit FATs and 8 sectors per cluster.
-FAT size is 10224 sectors, and provides 1308160 clusters.
-There are 32 reserved sectors.
-Volume ID is 20d7f9be, no volume label.
+```Shell
+root@archiso ~ # mkfs.ext4 -v /dev/md126p5
+mke2fs 1.47.2 (1-Jan-2025)
+fs_types for mke2fs.conf resolution: 'ext4'
+Discarding device blocks: done
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=16 blocks, Stripe width=32 blocks
+6553600 inodes, 26214400 blocks
+1310720 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=2174746624
+800 block groups
+32768 blocks per group, 32768 fragments per group
+8192 inodes per group
+Filesystem UUID: e4270575-1910-473c-a201-d3bbab5ddcee
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+        4096000, 7962624, 11239424, 20480000, 23887872
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (131072 blocks): done
+Writing superblocks and filesystem accounting information: done
+```
+
+### │ `/dev/md126p6` |     1.6T | VM disk images                  | `/var/lib/libvirt/images `  | **btrfs**   |
+And finally, the VM images partition will be formatted with **`btrfs`**.
+
+```Shell
+ 127 root@archiso ~ # mkfs.btrfs -v /dev/md126p6
+btrfs-progs v6.14
+See https://btrfs.readthedocs.io for more information.
+
+Performing full device TRIM /dev/md126p6 (1.60TiB) ...
+NOTE: several default settings have changed in version 5.15, please make sure
+      this does not affect your deployments:
+      - DUP for metadata (-m dup)
+      - enabled no-holes (-O no-holes)
+      - enabled free-space-tree (-R free-space-tree)
+
+Label:              (null)
+UUID:               e6fbaa6c-6cb1-4bcb-b73d-ef3294a7d38d
+Node size:          16384
+Sector size:        4096        (CPU page size: 4096)
+Filesystem size:    1.60TiB
+Block group profiles:
+  Data:             single            8.00MiB
+  Metadata:         DUP               1.00GiB
+  System:           DUP               8.00MiB
+SSD detected:       yes
+Zoned device:       no
+Features:           extref, skinny-metadata, no-holes, free-space-tree
+Checksum:           crc32c
+Number of devices:  1
+Devices:
+   ID        SIZE  PATH
+    1     1.60TiB  /dev/md126p6
 ```
 
 ## Mounting filesystems
