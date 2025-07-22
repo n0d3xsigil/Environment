@@ -12,7 +12,12 @@ Once arch is built, you'll need to log in and get a few things up and running...
 
   
 ## Network connectivity
+
+First we need to enable `iwd` to allow us to configure and control it. 
+
 We need to allow `iwd` to handle the network its self, such as DHCP.
+
+
 
 ```shell
 vim /etc/iwd/main.conf; cat /etc/iwd/main.conf
@@ -33,6 +38,96 @@ systemctl enable --now iwd
 Created symlink '/etc/systemd/system/multi-user.target.wants/iwd.service' → '/user/lib/systemd/system/iwd.service'
 ```
 
+Run `ip link` to get adapters
+```shell
+ip link
+root@archiso ~ # ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: enp0s31f6: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN mode DEFAULT group default qlen 1000
+    link/ether 21:2a:06:9f:00:fa brd ff:ff:ff:ff:ff:ff
+    altname enx7c4d8f50ee17
+4: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DORMANT group default qlen 1000
+    link/ether 6d:50:8b:a1:1a:c9 brd ff:ff:ff:ff:ff:ff
+```
+
+
+Use `iwctl` to enter wireless configuration
+
+then use `device list` to get a list of devices
+```shell
+root@archiso ~ # iwctl
+NetworkConfigurationEnabled: disabled
+StateDirectory: /var/lib/iwd
+Version: 3.8
+[iwd]# device list
+                                    Devices
+--------------------------------------------------------------------------------
+  Name                  Address               Powered     Adapter     Mode
+--------------------------------------------------------------------------------
+  wlan0                 46:33:3e:7c:72:13     on          phy0        station
+
+
+```
+
+now we know the device name we can use `station _wlan0_ scan` to find access points.
+
+```shell
+[iwd]# station wlan0 scan
+```
+This won't show any results, but it will scan for AP's
+
+Next we can perform `station _wlan0_ get-networks
+
+```shell
+[iwd]# station wlan0 get-networks
+                               Available networks
+--------------------------------------------------------------------------------
+      Network name                      Security            Signal
+--------------------------------------------------------------------------------
+      SSID-abc                          psk                 ****
+      Another SSID                      psk                 ****
+      iPhone 14 Pro Max Ultra Max       psk                 ****
+
+```
+
+
+The beauty of iwd is that you can tab to autocompleted. Which is great for my SSID that is randomly generated!
+
+To connect to the AP just `station _wlan0_ connect %SSID%`
+
+```shell
+[iwd]# station wlan0 connect SSID-abc
+Type the network passprhase for SSID-abc psk
+Passphrase: ***
+[iwd]# quit
+```
+
+
+perform a ping test to a host of your choice, I'm using `archlinux.org` partly because thats the recommendation, but also, I want to make sure I can reach the archlinux infrastructure.
+
+```shell
+root@archiso ~ # ping -3 -c 1 archlinux.org
+PING archlinux.org (95.217.163.246) 56(84) bytes of data.
+64 bytes from archlinux.org (95.217.163.246): icmp_seq=1 ttl=52 time=47.971 ms
+
+--- archlinux.org ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 47.971/47.971/47.971/0.000 ms
+```
+
+Great, we have a connection. 
+
+Let's enable `sshd` 
+
+```shell
+[root@archibold ~]# systemctl enable --now sshd
+Created symlink '/etc/systemd/system/multi-user.target.wants/sshd.service' → '/usr/lib/systemd/system/sshd.service'.
+```
+
+Now we can remote into the system.
+
+
 
 ## Secure boot
 Not that kind of secureboot
@@ -46,80 +141,78 @@ chmod 0600 /boot/loader/random-seed
 
 
 ## Create user
+
 We should never ever run as `root` only bad things can happen. So I like to create strong password and document the password (somewhere) for root and then use the new user account
 
 ```shell
 [root@archibold ~]# useradd -m archibold
 ```
 
+
 Of course we want to change the password of the new user
 
 ```shell
 [root@archibold ~]# passwd archibold
-New password:
-Retype new password:
+New password:           notMypassword
+Retype new password:    notMypassword
 passwd: password updated successfully
 ```
 
+
 ## Enable Sudo
-Sudo alows us to perform user substitution or to escilate our privileges, lets get it installed
 
-```sudo
-[root@archibold ~]# pacman -S sudo
-resolving dependencies...
-looking for conflicting packages...
+Sudo alows us to perform user substitution or to escilate our privileges, we installed it under `pacstrap`. Let's configure it
 
-Packages (1) sudo-1.9.16.p2-2
-
-Total Download Size:   1.88 MiB
-Total Installed Size:  7.76 MiB
-
-:: Proceed with installation? [Y/n] y
-:: Retrieving packages...
- sudo-1.9.16.p2-2-x86_64                               1923.0 KiB  6.76 MiB/s 00:00 [################################################] 100%
-(1/1) checking keys in keyring                                                      [################################################] 100%
-(1/1) checking package integrity                                                    [################################################] 100%
-(1/1) loading package files                                                         [################################################] 100%
-(1/1) checking for file conflicts                                                   [################################################] 100%
-(1/1) checking available disk space                                                 [################################################] 100%
-:: Processing package changes...
-(1/1) installing sudo                                                               [################################################] 100%
-:: Running post-transaction hooks...
-(1/3) Reloading system manager configuration...
-(2/3) Creating temporary files...
-(3/3) Arming ConditionNeedsUpdate...
-```
-
-Next we need to allow are new user access to run sudo
+We need to allow are new user access to run sudo
 
 ```shell
 [root@archibold ~]# EDITOR=vim visudo
 ```
 
-Add ``%USER% ALL=(ALL:ALL) ALL`.
+
+Add `archibold ALL=(ALL:ALL) ALL`.
+
+
+We also want to add the following lines before `## Read drop-in files from /etc/sudoers.d`
+
+```text
+Defaults timestamp_timeout=0
+Defaults passwd_tries=2
+Defaults env_reset
+```
+
+
+This makes it harder to do naughty things ;)
 
 We can now logout and log back in with the new user.
 
 
 ## Disable root
-First we need to change the `root` password by using `passwd`
+
+First we need to change the `root` password by using `passwd`. Since I logged in with the new user I will use `sudo -s` to change the password
 
 ```shell
-[root@archibold ~]# passwd
-New password:         XQQ8Si8Fa7keig
-Retype new password:  XQQ8Si8Fa7keig
+[archibold@archibold ~]$ sudo -s
+[sudo] password for archibold:  someLongPassword
+[root@archibold archibold]# passwd
+New password:           XQQ8Si8Fa7keig
+Retype new password:    XQQ8Si8Fa7keig
 passwd: password updated successfully
 ```
 
 Clearly `XQQ8Si8Fa7keig` is an example and not a real password.
 
+
 Next we want to lock root so it can't be accessed or bruteforced.
 
 ```shell
 [archibold@archibold ~]$ sudo passwd -l root
-[sudo] password for archibold:
+[sudo] password for archibold:    SomeRandomPassword
 passwd: password changed.
 ```
+
+
+
 
 
 ## nVidia hell
