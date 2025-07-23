@@ -7,7 +7,11 @@ more stuff
 
 Build the VM environment
 
-`sudo pacman -S qemu virt-manager virt-viewer dnsmasq bridge-utils openbsd-netcat libguestfs`
+```shell
+sudo pacman -S qemu virt-manager virt-viewer dnsmasq bridge-utils openbsd-netcat libguestfs
+```
+
+
 
 enable the `LibVirtD` service
 
