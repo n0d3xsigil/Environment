@@ -1,13 +1,49 @@
 # Bare metal build with Virtualisation
 
 ## Contents
+
 - [Guide](#guide)
-- Console keyboard layout
-- Verify boot mode
-- Connect network (Wireless)
-- update the clock
-- Connect remotely
-[**_Needs review..._**]
+- [Console keyboard layout](#console-keyboard-layout)
+- [Verify boot mode](#verify-boot-mode)
+- [Connect network (Wireless)](#connect-network-Wireless)
+- [update the clock](update-the-clock)
+- [Connect remotely](#connect-remotely)
+- [Partitioning Disks](#partitioning-disks)
+	- [Boot partition](#boot-partition)
+	- [Swap partition](#swap-partition)
+	- [Root filesystem](#root-filesystem)
+	- [Home partition](#home-partition)
+	- [ISOs partition](#isos-partition)
+	- [VM partition](#vm-partition)
+	- [Save partition format](#save-partition-format)
+	- [Verify format](#verify-format)
+- [Formatting partitions](#formatting-partitions)
+	- `/boot`
+	- `swap`
+	- `/`
+	- `/home`
+	- `/var/lib/libvirt/isos`
+	- `/var/lib/libvirt/images`
+- [Mounting filesystems](#mounting-filesystems)
+	- [Root](#root)
+	- [Boot](#boot)
+	- [Swap](#swap)
+	- [Home](#home)
+	- [ISOs](#isos)
+	- [VMs](#vms)
+	- [Verification](#verification)
+- [Installing the base system](#installing-the-base-system)
+- [Configure the system](#configure-the-system)
+	- [Generate `/mnt/etc/fstab](#generate-mntetcfstab)
+	- [chroot time](#chroot-time)
+	- [Password time](#password-time)
+	- [Timezone](#timezone)
+	- [Locale](#locale)
+	- [Set hostname](#set-hostname)
+	- [bootloader](#bootloader)
+	- [Reboot time](#reboot-time)
+- [Success](#success)
+- [Troubleshooting](#troubleshooting)]
 
 
 ## Guide
