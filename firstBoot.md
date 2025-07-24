@@ -1,5 +1,9 @@
 Once arch is built, you'll need to log in and get a few things up and running...
 
+## Pending updates
+- [ ] Configure keyboard layout within x
+- [ ] Configure 4k output.
+
 ## Contents
 - [Network connectivity](#network-connectivity)
 - [Secure boot](#secure-boot)
