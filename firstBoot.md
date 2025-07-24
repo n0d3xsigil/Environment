@@ -918,6 +918,8 @@ We now know that our mointor supports the 3840x2160 resolution we're after. We n
 Modeline "3840x2160_60.00"  712.75  3840 4152 4576 5312  2160 2163 2168 2237 -hsync +vsync
 ```
 
+
+
 We can take the output and pass it into `xrandr`
 
 ```bash
@@ -930,13 +932,98 @@ We can take the output and pass it into `xrandr`
 We now want to add the mode to `xrandr` taking into account our connection (`DP2-1`)
 
 ```bash
-[archibold@archibold ~]$ xrandr --addmode DP2-1 "3840x2160_60.00"
+[archibold@archibold ~]$ xrandr --output DP2-1 --mode 3840x2160 --rate 60.00
+[archibold@archibold ~]$ 
+```
+
+
+
+We need to save the resolution, however before that we want to disable `eDP1`. We'll do this because when the '4k' screen is in use the lid of the laptop is closed.
+
+```bash
+[archibold@archibold ~]$ xrandr --output eDP1 --off
 [archibold@archibold ~]$
 ```
 
 
 
-xrandr --output DP2-1 --mode "3840x2160_60.00"
+Next save the configuration
+
+```bash
+[archibold@archibold ~]$ autorandr --save 4k
+Saved current configuration as profile '4k'
+```
+
+
+
+We now want to copy the '4k' configuration to the systemwide config
+
+```bash
+[archibold@archibold ~]$ sudo cp -r ~/.config/autorandr/4k /etc/xdg/autorandr/
+[sudo] password for archibold: 
+[archibold@archibold ~]$
+```
+
+
+
+Create the script to call the configuration when **LightDM**. Let's call it `00-display-stat.sh`
+
+```bash
+[archibold@archibold ~]$ sudo cp -r ~/.config/autorandr/4k /etc/xdg/autorandr/
+[sudo] password for archibold: 
+```
+
+
+
+Paste in the following text into the file (Ctrl+Shift+V), followed by `:x` to save and exit.
+
+```ini
+#!/bin/bash
+/usr/bin/autorandr --change
+```
+
+
+
+Make the file execuitable
+
+```bash
+[archibold@archibold ~]$ sudo chmod -v -x /etc/lightdm/00-display-setup.sh 
+[sudo] password for archibold: 
+mode of '/etc/lightdm/00-display-setup.sh' retained as 0644 (rw-r--r--)
+```
+
+
+
+Next fire up the `/etc/lightdm/lightdm.conf` configuration file. 
+
+```bash
+[archibold@archibold ~]$ sudo vim /etc/lightdm/lightdm.conf 
+[sudo] password for archibold:
+```
+
+
+
+Find `[Seat:*]` and include the script we created above. 
+
+```bash
+[archibold@archibold ~]$ sudo vim /etc/lightdm/lightdm.conf 
+[sudo] password for archibold:
+```
+
+
+
+After we can cat the result to make sure the file was saved
+
+```bash
+[archibold@archibold ~]$ cat /etc/lightdm/lightdm.conf | grep -i display-setup-script
+# display-setup-script = Script to run when starting a greeter session (runs as root)
+#display-setup-script=
+display-setup-script=/etc/lightdm/00-display-setup.sh
+```
+
+
+
+
 
 
 
