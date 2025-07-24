@@ -257,7 +257,7 @@ Changing power on succeeded
 
 
 
-This next step may or may not be required. Documentation says to do it but I alway ss get the `_Agent is already registered_` message. So, next time I may very well skip this step.
+This next step may or may not be required. Documentation says to do it but I alway ss get the _`Agent is already registered`_ message. So, next time I may very well skip this step.
 
 ```shell
 [bluetoothctl]> agent on
