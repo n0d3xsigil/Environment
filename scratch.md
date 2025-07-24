@@ -501,5 +501,185 @@ Repeat this process for each device you would like to connect using bluetooth.
 
 
 
+Need to include the following packages in pacstrap
 
+- [ ] Include `qemu-desktop` and `spice-gtk` in pacstrap
+```shell
+[archibold@archibold ~]$ sudo pacman -S qemu-desktop virt-manager virt-viewer spice-gtk
+[sudo] password for archibold: 
+warning: virt-manager-5.0.0-1 is up to date -- reinstalling
+warning: virt-viewer-11.0-4 is up to date -- reinstalling
+warning: spice-gtk-0.42-4 is up to date -- reinstalling
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (51) gfxstream-0.1.2-2  glm-1.0.1-1  libaemu-0.1.2-5  libavif-1.3.0-1  libnfs-6.0.2-5
+              libpipewire-1:1.4.6-1  libyuv-r2426+464c51a03-1  qemu-audio-alsa-10.0.2-1
+              qemu-audio-dbus-10.0.2-1  qemu-audio-jack-10.0.2-1  qemu-audio-oss-10.0.2-1
+              qemu-audio-pa-10.0.2-1  qemu-audio-pipewire-10.0.2-1  qemu-audio-sdl-10.0.2-1
+              qemu-audio-spice-10.0.2-1  qemu-block-curl-10.0.2-1  qemu-block-dmg-10.0.2-1
+              qemu-block-nfs-10.0.2-1  qemu-block-ssh-10.0.2-1  qemu-chardev-spice-10.0.2-1
+              qemu-hw-display-qxl-10.0.2-1  qemu-hw-display-virtio-gpu-10.0.2-1
+              qemu-hw-display-virtio-gpu-gl-10.0.2-1  qemu-hw-display-virtio-gpu-pci-10.0.2-1
+              qemu-hw-display-virtio-gpu-pci-gl-10.0.2-1  qemu-hw-display-virtio-gpu-pci-rutabaga-10.0.2-1
+              qemu-hw-display-virtio-gpu-rutabaga-10.0.2-1  qemu-hw-display-virtio-vga-10.0.2-1
+              qemu-hw-display-virtio-vga-gl-10.0.2-1  qemu-hw-display-virtio-vga-rutabaga-10.0.2-1
+              qemu-hw-uefi-vars-10.0.2-1  qemu-hw-usb-host-10.0.2-1  qemu-hw-usb-redirect-10.0.2-1
+              qemu-hw-usb-smartcard-10.0.2-1  qemu-ui-curses-10.0.2-1  qemu-ui-dbus-10.0.2-1
+              qemu-ui-egl-headless-10.0.2-1  qemu-ui-gtk-10.0.2-1  qemu-ui-opengl-10.0.2-1
+              qemu-ui-sdl-10.0.2-1  qemu-ui-spice-app-10.0.2-1  qemu-ui-spice-core-10.0.2-1
+              qemu-vhost-user-gpu-10.0.2-1  rutabaga-ffi-0.1.6-2  sdl2_image-2.8.8-1  spice-0.16.0-1
+              virglrenderer-1.1.1-1  qemu-desktop-10.0.2-1  spice-gtk-0.42-4  virt-manager-5.0.0-1
+              virt-viewer-11.0-4
+
+Total Download Size:    8.16 MiB
+Total Installed Size:  47.78 MiB
+Net Upgrade Size:      41.49 MiB
+
+:: Proceed with installation? [Y/n] 
+:: Retrieving packages...
+ qemu-hw-display-virtio-gpu-10.0....    36.6 KiB   192 KiB/s 00:00 [####################################] 100%
+ qemu-hw-display-qxl-10.0.2-1-x86_64    45.0 KiB   211 KiB/s 00:00 [####################################] 100%
+ qemu-ui-gtk-10.0.2-1-x86_64            39.2 KiB   184 KiB/s 00:00 [####################################] 100%
+ qemu-hw-uefi-vars-10.0.2-1-x86_64      34.5 KiB   147 KiB/s 00:00 [####################################] 100%
+ sdl2_image-2.8.8-1-x86_64              69.0 KiB   272 KiB/s 00:00 [####################################] 100%
+ qemu-audio-dbus-10.0.2-1-x86_64        66.7 KiB   260 KiB/s 00:00 [####################################] 100%
+ qemu-ui-dbus-10.0.2-1-x86_64           81.9 KiB   306 KiB/s 00:00 [####################################] 100%
+ libnfs-6.0.2-5-x86_64                 179.0 KiB   559 KiB/s 00:00 [####################################] 100%
+ qemu-hw-usb-redirect-10.0.2-1-x86_64   34.4 KiB   286 KiB/s 00:00 [####################################] 100%
+ qemu-ui-spice-core-10.0.2-1-x86_64     34.0 KiB   350 KiB/s 00:00 [####################################] 100%
+ qemu-hw-usb-host-10.0.2-1-x86_64       31.4 KiB   506 KiB/s 00:00 [####################################] 100%
+ qemu-vhost-user-gpu-10.0.2-1-x86_64   256.1 KiB   678 KiB/s 00:00 [####################################] 100%
+ qemu-audio-pipewire-10.0.2-1-x86_64    28.7 KiB   350 KiB/s 00:00 [####################################] 100%
+ qemu-ui-sdl-10.0.2-1-x86_64            27.1 KiB   445 KiB/s 00:00 [####################################] 100%
+ qemu-hw-display-virtio-gpu-gl-10...    27.1 KiB   444 KiB/s 00:00 [####################################] 100%
+ spice-0.16.0-1-x86_64                 342.4 KiB   777 KiB/s 00:00 [####################################] 100%
+ qemu-block-ssh-10.0.2-1-x86_64         26.6 KiB   329 KiB/s 00:00 [####################################] 100%
+ qemu-hw-display-virtio-gpu-rutab...    25.8 KiB   538 KiB/s 00:00 [####################################] 100%
+ qemu-ui-opengl-10.0.2-1-x86_64         23.9 KiB   488 KiB/s 00:00 [####################################] 100%
+ libpipewire-1:1.4.6-1-x86_64          461.4 KiB   986 KiB/s 00:00 [####################################] 100%
+ virglrenderer-1.1.1-1-x86_64          400.1 KiB   837 KiB/s 00:00 [####################################] 100%
+ qemu-ui-curses-10.0.2-1-x86_64         23.1 KiB   420 KiB/s 00:00 [####################################] 100%
+ qemu-hw-usb-smartcard-10.0.2-1-x...    23.0 KiB   378 KiB/s 00:00 [####################################] 100%
+ qemu-block-curl-10.0.2-1-x86_64        23.0 KiB   328 KiB/s 00:00 [####################################] 100%
+ libaemu-0.1.2-5-x86_64                316.4 KiB   611 KiB/s 00:01 [####################################] 100%
+ qemu-block-nfs-10.0.2-1-x86_64         22.3 KiB   314 KiB/s 00:00 [####################################] 100%
+ qemu-audio-alsa-10.0.2-1-x86_64        21.6 KiB   288 KiB/s 00:00 [####################################] 100%
+ qemu-audio-pa-10.0.2-1-x86_64          20.9 KiB   249 KiB/s 00:00 [####################################] 100%
+ qemu-audio-oss-10.0.2-1-x86_64         19.8 KiB   324 KiB/s 00:00 [####################################] 100%
+ qemu-audio-jack-10.0.2-1-x86_64        19.4 KiB   647 KiB/s 00:00 [####################################] 100%
+ qemu-chardev-spice-10.0.2-1-x86_64     19.3 KiB   482 KiB/s 00:00 [####################################] 100%
+ qemu-audio-sdl-10.0.2-1-x86_64         18.3 KiB   334 KiB/s 00:00 [####################################] 100%
+ qemu-hw-display-virtio-vga-10.0....    17.9 KiB   325 KiB/s 00:00 [####################################] 100%
+ qemu-ui-spice-app-10.0.2-1-x86_64      17.6 KiB   352 KiB/s 00:00 [####################################] 100%
+ qemu-audio-spice-10.0.2-1-x86_64       17.3 KiB   347 KiB/s 00:00 [####################################] 100%
+ qemu-ui-egl-headless-10.0.2-1-x86_64   17.2 KiB   286 KiB/s 00:00 [####################################] 100%
+ qemu-hw-display-virtio-gpu-pci-1...    16.6 KiB   244 KiB/s 00:00 [####################################] 100%
+ qemu-hw-display-virtio-vga-rutab...    15.9 KiB   221 KiB/s 00:00 [####################################] 100%
+ qemu-hw-display-virtio-vga-gl-10...    15.9 KiB   212 KiB/s 00:00 [####################################] 100%
+ qemu-block-dmg-10.0.2-1-x86_64         15.8 KiB   208 KiB/s 00:00 [####################################] 100%
+ rutabaga-ffi-0.1.6-2-x86_64           607.0 KiB   954 KiB/s 00:01 [####################################] 100%
+ qemu-hw-display-virtio-gpu-pci-r...    15.7 KiB   302 KiB/s 00:00 [####################################] 100%
+ qemu-hw-display-virtio-gpu-pci-g...    15.7 KiB   412 KiB/s 00:00 [####################################] 100%
+ qemu-desktop-10.0.2-1-x86_64           14.5 KiB   323 KiB/s 00:00 [####################################] 100%
+ gfxstream-0.1.2-2-x86_64             1268.2 KiB  1817 KiB/s 00:01 [####################################] 100%
+ glm-1.0.1-1-x86_64                      3.4 MiB  3.23 MiB/s 00:01 [####################################] 100%
+ Total (46/46)                           8.2 MiB  7.35 MiB/s 00:01 [####################################] 100%
+(51/51) checking keys in keyring                                   [####################################] 100%
+(51/51) checking package integrity                                 [####################################] 100%
+(51/51) loading package files                                      [####################################] 100%
+(51/51) checking for file conflicts                                [####################################] 100%
+(51/51) checking available disk space                              [####################################] 100%
+:: Processing package changes...
+( 1/51) installing qemu-audio-alsa                                 [####################################] 100%
+( 2/51) installing qemu-audio-dbus                                 [####################################] 100%
+( 3/51) installing qemu-audio-jack                                 [####################################] 100%
+( 4/51) installing qemu-audio-oss                                  [####################################] 100%
+( 5/51) installing qemu-audio-pa                                   [####################################] 100%
+( 6/51) installing libpipewire                                     [####################################] 100%
+( 7/51) installing qemu-audio-pipewire                             [####################################] 100%
+( 8/51) installing qemu-audio-sdl                                  [####################################] 100%
+( 9/51) installing qemu-ui-opengl                                  [####################################] 100%
+(10/51) installing spice                                           [####################################] 100%
+(11/51) installing qemu-ui-spice-core                              [####################################] 100%
+(12/51) installing qemu-audio-spice                                [####################################] 100%
+(13/51) installing qemu-block-curl                                 [####################################] 100%
+(14/51) installing qemu-block-dmg                                  [####################################] 100%
+(15/51) installing libnfs                                          [####################################] 100%
+(16/51) installing qemu-block-nfs                                  [####################################] 100%
+(17/51) installing qemu-block-ssh                                  [####################################] 100%
+(18/51) installing qemu-chardev-spice                              [####################################] 100%
+(19/51) installing qemu-hw-display-qxl                             [####################################] 100%
+(20/51) installing qemu-hw-display-virtio-gpu                      [####################################] 100%
+(21/51) installing virglrenderer                                   [####################################] 100%
+(22/51) installing qemu-hw-display-virtio-gpu-gl                   [####################################] 100%
+(23/51) installing libaemu                                         [####################################] 100%
+(24/51) installing glm                                             [####################################] 100%
+(25/51) installing gfxstream                                       [####################################] 100%
+(26/51) installing rutabaga-ffi                                    [####################################] 100%
+(27/51) installing qemu-hw-display-virtio-gpu-rutabaga             [####################################] 100%
+(28/51) installing qemu-hw-display-virtio-gpu-pci                  [####################################] 100%
+(29/51) installing qemu-hw-display-virtio-gpu-pci-gl               [####################################] 100%
+(30/51) installing qemu-hw-display-virtio-gpu-pci-rutabaga         [####################################] 100%
+(31/51) installing qemu-hw-display-virtio-vga                      [####################################] 100%
+(32/51) installing qemu-hw-display-virtio-vga-gl                   [####################################] 100%
+(33/51) installing qemu-hw-display-virtio-vga-rutabaga             [####################################] 100%
+(34/51) installing qemu-hw-uefi-vars                               [####################################] 100%
+(35/51) installing qemu-hw-usb-host                                [####################################] 100%
+(36/51) installing qemu-hw-usb-redirect                            [####################################] 100%
+(37/51) installing qemu-hw-usb-smartcard                           [####################################] 100%
+(38/51) installing qemu-ui-curses                                  [####################################] 100%
+(39/51) installing qemu-ui-dbus                                    [####################################] 100%
+(40/51) installing qemu-ui-egl-headless                            [####################################] 100%
+(41/51) installing qemu-ui-gtk                                     [####################################] 100%
+(42/51) installing libyuv                                          [####################################] 100%
+(43/51) installing libavif                                         [####################################] 100%
+(44/51) installing sdl2_image                                      [####################################] 100%
+(45/51) installing qemu-ui-sdl                                     [####################################] 100%
+(46/51) installing qemu-ui-spice-app                               [####################################] 100%
+(47/51) installing qemu-vhost-user-gpu                             [####################################] 100%
+(48/51) installing qemu-desktop                                    [####################################] 100%
+Optional dependencies for qemu-desktop
+    qemu-user-static: for static user mode emulation of QEMU targets
+    samba: for SMB/CIFS server support
+    qemu-block-gluster: for Gluster block driver
+    qemu-block-iscsi: for iSCSI block driver
+    qemu-chardev-baum: for Baum chardev driver
+    qemu-docs: for documentation
+    qemu-emulators-full: for all system emulators
+    qemu-full: for a full QEMU installation
+    qemu-hw-s390x-virtio-gpu-ccw: for s390x-virtio-gpu-ccw display device
+    qemu-pr-helper: for persistent reservation utility
+    qemu-system-aarch64: for AARCH64 system emulator
+    qemu-system-alpha: for Alpha system emulator
+    qemu-system-arm: for ARM system emulator
+    qemu-system-avr: for AVR system emulator
+    qemu-system-hppa: for HPPA system emulator
+    qemu-system-m68k: for ColdFire (m68k) system emulator
+    qemu-system-microblaze: for Microblaze system emulator
+    qemu-system-mips: for MIPS system emulator
+    qemu-system-or1k: for OpenRisc32 system emulator
+    qemu-system-ppc: for PPC system emulator
+    qemu-system-riscv: for RISC-V system emulator
+    qemu-system-rx: for RX system emulator
+    qemu-system-s390x: for S390 system emulator
+    qemu-system-sh4: for SH4 system emulator
+    qemu-system-sparc: for SPARC system emulator
+    qemu-system-tricore: for tricore system emulator
+    qemu-system-xtensa: for Xtensa system emulator
+    qemu-tests: for QEMU tests
+    qemu-tools: for QEMU tools
+    qemu-user: for user mode emulation of QEMU targets
+    qemu-vmsr-helper: for accessing the Running Average Power Limit (RAPL) MSR
+(49/51) reinstalling spice-gtk                                     [####################################] 100%
+(50/51) reinstalling virt-manager                                  [####################################] 100%
+(51/51) reinstalling virt-viewer                                   [####################################] 100%
+:: Running post-transaction hooks...
+(1/6) Arming ConditionNeedsUpdate...
+(2/6) Updating the MIME type database...
+(3/6) Probing GDK-Pixbuf loader modules...
+(4/6) Compiling GSettings XML schema files...
+(5/6) Updating icon theme caches...
+(6/6) Updating the desktop file MIME type cache...
+```
 
