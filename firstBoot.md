@@ -15,6 +15,7 @@ Once arch is built, you'll need to log in and get a few things up and running...
 - [Enable LightDM](#enable-lightdm)
 - [Enable Openbox](#enable-openbox)
   - [Configure Keyboard](#configure-keyboard)
+  - [Enable 4k output](#enable-4k-output)
 
   
 ## Network connectivity
@@ -795,4 +796,154 @@ archibold@192.168.1.21's password:   oMyGodNotAgain!
 Last login: Tue Jul 22 21:34:36 2025 from 192.168.1.22
 [archibold@archibold ~]$
 ```
+
+### Enable 4k output
+
+- [ ] Include autorandr in the pacstrap build
+- [ ] Include xorg-xrandr in the pacstrap build
+- [ ] Include arandr in the pacstrap build
+
+
+The monitor I use is 4k, so as you'd expect, I'd like to be able to make full use of it. The requried packages should already be installed, if not do the run the following command
+
+```bash
+[archibold@archibold ~]$ sudo pacman -S autorandr xorg-xrandr arandr
+[sudo] password for archibold: 
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (4) xorg-xdpyinfo-1.3.4-2  arandr-0.1.11-4  autorandr-1.15-1  xorg-xrandr-1.5.3-1
+
+Total Download Size:   0.17 MiB
+Total Installed Size:  0.51 MiB
+
+:: Proceed with installation? [Y/n] 
+:: Retrieving packages...
+ autorandr-1.15-1-any          30.5 KiB   226 KiB/s 00:00 [###############################] 100%
+ xorg-xdpyinfo-1.3.4-2-x...    16.0 KiB   110 KiB/s 00:00 [###############################] 100%
+ xorg-xrandr-1.5.3-1-x86_64    37.6 KiB   222 KiB/s 00:00 [###############################] 100%
+ arandr-0.1.11-4-any           94.6 KiB   406 KiB/s 00:00 [###############################] 100%
+ Total (4/4)                  178.7 KiB   627 KiB/s 00:00 [###############################] 100%
+(4/4) checking keys in keyring                            [###############################] 100%
+(4/4) checking package integrity                          [###############################] 100%
+(4/4) loading package files                               [###############################] 100%
+(4/4) checking for file conflicts                         [###############################] 100%
+(4/4) checking available disk space                       [###############################] 100%
+:: Processing package changes...
+(1/4) installing xorg-xdpyinfo                            [###############################] 100%
+(2/4) installing xorg-xrandr                              [###############################] 100%
+(3/4) installing autorandr                                [###############################] 100%
+Optional dependencies for autorandr
+    bash-completion: auto-completion for autorandr in Bash
+    zsh-completions: auto-completion for autorandr in ZSH
+(4/4) installing arandr                                   [###############################] 100%
+:: Running post-transaction hooks...
+(1/4) Reloading system manager configuration...
+(2/4) Reloading device manager configuration...
+(3/4) Arming ConditionNeedsUpdate...
+(4/4) Updating the desktop file MIME type cache...
+```
+
+First let's find out what resolutions are supported by the connected displays
+
+```bash
+[archibold@archibold ~]$ xrandr
+Screen 0: minimum 8 x 8, current 1920 x 1080, maximum 32767 x 32767
+eDP1 connected primary 1920x1080+0+0 (normal left inverted right x axis y axis) 340mm x 190mm
+   1920x1080     60.00*+  40.00  
+DP1 disconnected (normal left inverted right x axis y axis)
+DP2 disconnected (normal left inverted right x axis y axis)
+DP2-1 connected 1920x1080+0+0 (normal left inverted right x axis y axis) 700mm x 390mm
+   3840x2160     60.00 +  60.00    59.94    60.00    30.00    29.97  
+   1920x2160     60.00  
+   2560x1440     59.95  
+   2048x1152     60.00  
+   1920x1200     59.95  
+   1920x1080     60.00*   60.00    50.00    59.94  
+   1600x1200     60.00  
+   1680x1050     59.88  
+   1600x900      60.00  
+   1280x1024     75.02    60.02  
+   1280x800      59.91  
+   1152x864      75.00  
+   1280x720      60.00    50.00    59.94  
+   1024x768      75.03    70.07    60.00  
+   832x624       74.55  
+   800x600       72.19    75.00    60.32    56.25  
+   720x576       50.00  
+   720x480       60.00    59.94  
+   640x480       75.00    72.81    66.67    60.00    59.94  
+   720x400       70.08  
+DP2-2 disconnected (normal left inverted right x axis y axis)
+DP2-3 disconnected (normal left inverted right x axis y axis)
+DP3 disconnected (normal left inverted right x axis y axis)
+HDMI1 disconnected (normal left inverted right x axis y axis)
+VIRTUAL1 disconnected (normal left inverted right x axis y axis)
+DP-1-0 disconnected (normal left inverted right x axis y axis)
+DP-1-1 disconnected (normal left inverted right x axis y axis)
+DP-1-2 disconnected (normal left inverted right x axis y axis)
+DP-1-3 disconnected (normal left inverted right x axis y axis)
+HDMI-1-0 disconnected (normal left inverted right x axis y axis)****
+```
+
+
+
+What can we gleam from this information.
+- **Laptop display**
+  - Port:          eDP1
+  - Resolution:    1920x1080
+  - Supported:
+    - 1920x1080
+- **External display**
+  - Port:          DP2-1
+  - Resolution:    1920x1080
+  - Supported:
+    - 3840x2160
+    - 1920x1080
+    - 1280x1024
+    - 1280x720
+    - 1024x768
+    - 800x600
+    - 720x480
+    - 720x400
+    - 640x480
+
+Imagine using a 32" display at just 648x480 😲. I remember being blown away by going from 640x480 to 800x600 on a 14" screen.
+
+We now know that our mointor supports the 3840x2160 resolution we're after. We need to issue the command `cvt` to calculate the 'Coordinated Video Timing'
+
+```bash
+[archibold@archibold ~]$ cvt 3840 2160 60
+# 3840x2160 59.98 Hz (CVT 8.29M9) hsync: 134.18 kHz; pclk: 712.75 MHz
+Modeline "3840x2160_60.00"  712.75  3840 4152 4576 5312  2160 2163 2168 2237 -hsync +vsync
+```
+
+We can take the output and pass it into `xrandr`
+
+```bash
+[archibold@archibold ~]$ xrandr --newmode "3840x2160_60.00"  712.75  3840 4152 4576 5312  2160 2163 2168 2237 -hsync +vsync
+[archibold@archibold ~]$
+```
+
+
+
+We now want to add the mode to `xrandr` taking into account our connection (`DP2-1`)
+
+```bash
+[archibold@archibold ~]$ xrandr --addmode DP2-1 "3840x2160_60.00"
+[archibold@archibold ~]$
+```
+
+
+
+xrandr --output DP2-1 --mode "3840x2160_60.00"
+
+
+
+
+
+
+
+
+
 
