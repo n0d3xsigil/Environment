@@ -13,7 +13,8 @@ Once arch is built, you'll need to log in and get a few things up and running...
 - [Configure firewall](#configure-firewall)
 - [nvidia hell](#nvidia-hell)
 - [Enable LightDM](#enable-lightdm)
-- 
+- [Enable Openbox](#enable-openbox)
+  - [Configure Keyboard](#configure-keyboard)
 
   
 ## Network connectivity
@@ -713,6 +714,77 @@ Broadcast message from root@archibold on pts/1 (Tue 2025-07-22 21:51:44 BST):
 
 The system will reboot now!
 ```
+
+
+### Configure Keyboard
+
+Create the `00-keyboard.conf` file/
+
+```bash
+[archibold@archibold ~]$ sudo vim /etc/X11/xorg.conf.d/00-keyboard.conf
+[sudo] password for archibold:
+```
+
+
+
+Enter the following information. Press `i` to enter _Insert_ mode.
+
+```ini
+Section "InputClass"
+    Identifier "system-keyboard"
+    MatchIsKeyboard "on"
+    Option "XkbLayout" "gb"
+EndSection
+```
+
+
+
+Press `Esc` to leave _Insert_ mode and type `:x` to save and exit. Cat the file to validate the data was saved
+
+```bash
+[archibold@archibold ~]$ cat /etc/X11/xorg.conf.d/00-keyboard.conf 
+Section "InputClass"
+    Identifier "system-keyboard"
+    MatchIsKeyboard "on"
+    Option "XkbLayout" "gb"
+EndSection
+```
+
+
+Although this should be sufficient, we can also issue the `setxkbmap` command, so I'm going to include that in the `openbox` startup to make sure it's always applied.
+
+```bash
+[archibold@archibold ~]$ vim ~/.config/openbox/autostart
+```
+
+
+
+Insert (`i`) the following line at the top of the file
+
+```ini
+# Keyboard layout
+setxkbmap gb &
+```
+
+
+
+Tap `Esc` and type `:x` to save and exit. Again, we can cat the file to ensure it was written correctly.
+
+```bash
+[archibold@archibold ~]$ cat ~/.config/openbox/autostart 
+# Keyboard layout
+setxkbmap gb &
+
+# Applications
+virt-manager &
+```
+
+
+
+
+
+
+
 
 
 Reconnect
