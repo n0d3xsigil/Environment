@@ -1,6 +1,14 @@
 # Environment
 My environment
 
+
+Currently consists of
+Base laptop with 128gb ram and dual 1tb nvme on raid0
+
+Arch as the base
+
+windows 11 guest
+Kali Guest
 ## VPN
 Open VPN. 
 
